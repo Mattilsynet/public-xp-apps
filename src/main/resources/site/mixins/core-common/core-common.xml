@@ -1,0 +1,30 @@
+<mixin>
+  <display-name i18n="coreCommonMixin.displayName">Common fields</display-name>
+  <description i18n="coreCommonMixin.description">Common fields for content types</description>
+
+  <form>
+    <input name="title" type="TextLine">
+      <label i18n="coreCommonMixin.title">Title</label>
+      <occurrences maximum="1" minimum="1" />
+    </input>
+
+    <input name="intro" type="HtmlArea">
+      <label i18n="coreCommonMixin.intro">Intro</label>
+      <occurrences maximum="1" minimum="0" />
+      <config>
+        <exclude>*</exclude>
+        <include>Italic Strike | RemoveFormat | SpecialChar</include>
+      </config>
+    </input>
+
+    <input name="text" type="HtmlArea">
+      <label i18n="coreCommonMixin.text">Text</label>
+      <occurrences maximum="1" minimum="0" />
+      <config>
+        <exclude>*</exclude>
+        <include>Format | Bold Italic Strike RemoveFormat | BulletedList NumberedList Blockquote | Subscript Superscript | SpecialChar Anchor Image Macro Link Unlink | Table</include>
+        <allowHeadings>h2 h3 h4</allowHeadings>
+      </config>
+    </input>
+  </form>
+</mixin>

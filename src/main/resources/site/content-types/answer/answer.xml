@@ -1,0 +1,16 @@
+<content-type>
+	<display-name i18n="wizardTag.displayname">Svar</display-name>
+	<display-name-expression>${text}</display-name-expression>
+	<display-name-label i18n="wizardTag.displayname.label">Svar</display-name-label>
+	<description
+		i18n="wizardTag.description">Svar som kan refereres til dersom man bruker oppsummering</description>
+	<super-type>base:structured</super-type>
+	<allow-child-content-type>a^</allow-child-content-type> <!-- a^ does not match anything -->
+
+	<form>
+		<input name="text" type="TextLine">
+			<label>Svartekst</label>
+			<occurrences maximum="1" minimum="1" />
+		</input>
+	</form>
+</content-type>

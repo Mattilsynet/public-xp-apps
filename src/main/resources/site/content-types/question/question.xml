@@ -1,0 +1,65 @@
+<content-type>
+	<display-name>Spørsmål</display-name>
+	<display-name-expression>${question}</display-name-expression>
+	<description>Spørsmål</description>
+	<super-type>base:structured</super-type>
+	<allow-child-content-type>${app}:branch-*</allow-child-content-type>
+	<allow-child-content-type>base:folder</allow-child-content-type>
+
+	<form>
+		<input name="question" type="TextLine">
+			<label i18n="wizardStep.questionOrTitle">Spørsmål</label>
+			<occurrences minimum="1" maximum="1" />
+		</input>
+
+		<option-set name="answerType">
+			<label i18n="wizardStep.inputType">Svartype</label>
+			<occurrences minimum="1" maximum="1" />
+			<help-text
+				i18n="wizardStep.inputTypeHelpText">Velg hvordan brukeren skal fylle inn svarene</help-text>
+			<options minimum="1" maximum="1">
+				<option name="radiobutton">
+					<label i18n="multiPageForm.radioButtons">Radioknapper</label>
+					<items>
+						<input name="nextStep" type="ContentSelector">
+							<label i18n="common.nextStep">Grener / stier</label>
+							<occurrences minimum="0" maximum="0" />
+							<config>
+								<allowContentType>branch-radio</allowContentType>
+								<allowPath>./*</allowPath>
+							</config>
+						</input>
+					</items>
+				</option>
+
+				<option name="number">
+					<label i18n="wizardStep.numbers">Tall</label>
+					<items>
+						<input name="nextStep" type="ContentSelector">
+							<label i18n="common.nextStep">Grener / stier</label>
+							<occurrences minimum="0" maximum="0" />
+							<config>
+								<allowContentType>branch-number</allowContentType>
+								<allowPath>./*</allowPath>
+							</config>
+						</input>
+					</items>
+				</option>
+
+				<option name="checkbox">
+					<label i18n="wizardStep.checkbox">Sjekkboks</label>
+					<items>
+						<input name="nextStep" type="ContentSelector">
+							<label i18n="common.nextStep">Grener / stier</label>
+							<occurrences minimum="0" maximum="0" />
+							<config>
+								<allowContentType>branch-checkbox</allowContentType>
+								<allowPath>./*</allowPath>
+							</config>
+						</input>
+					</items>
+				</option>
+			</options>
+		</option-set>
+	</form>
+</content-type>

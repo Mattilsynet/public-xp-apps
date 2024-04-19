@@ -1,0 +1,16 @@
+<mixin>
+	<display-name>Logisk operator</display-name>
+
+	<form>
+		<input name="logicalOperator" type="ComboBox">
+			<label>Logisk operator for denne boksen</label>
+			<help-text>Gjelder kun dersom du har mer enn ett element i denne boksen</help-text>
+			<occurrences minimum="0" maximum="1" />
+			<config>
+				<option value="and">Alle verdiene må oppfylles (AND)</option>
+				<option value="or">En av verdiene må oppfylles (OR)</option>
+				<option value="not">Ingen av verdiene må oppfylles (NOT)</option>
+			</config>
+		</input>
+	</form>
+</mixin>

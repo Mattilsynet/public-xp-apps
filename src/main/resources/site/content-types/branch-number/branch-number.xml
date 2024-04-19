@@ -1,0 +1,47 @@
+<content-type>
+	<display-name i18n="branchNumber.displayname">Gren tall</display-name>
+	<display-name-label i18n="branchNumber.displayname.label">Gren med tall-svar</display-name-label>
+	<description i18n="branchNumber.description">Gren med tall-svar</description>
+	<super-type>base:structured</super-type>
+	<allow-child-content-type>${app}:result</allow-child-content-type>
+	<allow-child-content-type>${app}:question</allow-child-content-type>
+	<allow-child-content-type>${app}:answer*</allow-child-content-type>
+	<allow-child-content-type>${app}:result-engine</allow-child-content-type>
+	<allow-child-content-type>base:folder</allow-child-content-type>
+
+	<form>
+		<mixin name="answers" />
+		<mixin name="next-question-or-result" />
+
+		<item-set name="conditionalAnswerTotal">
+			<label i18n="">Betinget navigering totalsum</label>
+			<help-text i18n="">Betinget navigering basert på den totale summen av alle svarene</help-text>
+			<occurrences minimum="0" maximum="1" />
+			<items>
+				<mixin name="condition-number" />
+				<mixin name="next-question-or-result" />
+			</items>
+		</item-set>
+
+		<item-set name="conditionalAnswer">
+			<label i18n="wizardStep.conditionalStep">Betinget navigering</label>
+			<help-text i18n="">Betingelse basert på verdiene til individuelle svar</help-text>
+			<occurrences minimum="0" maximum="0" />
+			<items>
+				<mixin name="condition-number" />
+				<input name="answers" type="CustomSelector">
+					<label>Svar betingelsen gjelder for</label>
+					<help-text>Velg svaralternativer som betingelsen gjelder for. Betingelsen gjelder hvert enkelt
+						svaralternativ. Vær oppmerksom på at du må oppdatere dette
+						hvis du har direktesvar og endrer på svaralternativene i grenen.
+					</help-text>
+					<occurrences minimum="1" maximum="0" />
+					<config>
+						<service>already-selected-answers-custom-selector</service>
+					</config>
+				</input>
+				<mixin name="next-question-or-result" />
+			</items>
+		</item-set>
+	</form>
+</content-type>

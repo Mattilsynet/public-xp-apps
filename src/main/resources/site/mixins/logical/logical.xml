@@ -1,0 +1,66 @@
+<mixin>
+	<display-name i18n="">Logisk sjekk</display-name>
+	<description i18n="">Sjekk om resultatet skal vises med logisk uttrykk</description>
+
+	<form>
+		<item-set name="displayCriteria">
+			<label>Kriterier for visning</label>
+			<help-text>Her settes opp logiske kriterier for når dette resultatet skal vises.
+				etc: (Hund ELLER Katt) OG Sverige</help-text>
+			<occurrences minimum="1" maximum="1" />
+			<items>
+				<input name="logical-operator" type="ComboBox">
+					<label>Logisk operator for denne boksen</label>
+					<help-text>Gjelder kun dersom du har mer enn ett element i denne boksen</help-text>
+					<occurrences minimum="0" maximum="1" />
+					<config>
+						<option value="and">Alle verdiene må oppfylles (AND)</option>
+						<option value="or">En av verdiene må oppfylles (OR)</option>
+						<option value="not">Ingen av verdiene må oppfylles (NOT)</option>
+					</config>
+				</input>
+				<option-set name="answerOrLogic">
+					<occurrences minimum="0" maximum="0" />
+					<options minimum="1" maximum="1">
+						<option name="answer">
+							<default>true</default>
+							<label>Svar</label>
+							<items>
+								<mixin name="logical-operator" />
+								<input name="answers" type="ContentSelector">
+									<label>Svar</label>
+									<occurrences minimum="1" maximum="0" />
+									<config>
+										<allowContentType>answer</allowContentType>
+										<allowContentType>answer-group</allowContentType>
+									</config>
+								</input>
+							</items>
+						</option>
+						<option name="logic">
+							<occurrences minimum="1" maximum="0" />
+							<label>Logisk uttrykk</label>
+							<items>
+								<mixin name="logical-operator" />
+								<item-set name="logic">
+									<occurrences minimum="1" maximum="0" />
+									<items minimum="1" maximum="1">
+										<mixin name="logical-operator" />
+										<input name="answers" type="ContentSelector">
+											<label>Svar</label>
+											<occurrences minimum="1" maximum="0" />
+											<config>
+												<allowContentType>answer</allowContentType>
+												<allowContentType>answer-group</allowContentType>
+											</config>
+										</input>
+									</items>
+								</item-set>
+							</items>
+						</option>
+					</options>
+				</option-set>
+			</items>
+		</item-set>
+	</form>
+</mixin>
