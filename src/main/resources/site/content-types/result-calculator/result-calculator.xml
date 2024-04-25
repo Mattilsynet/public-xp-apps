@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<content-type>
+  <display-name>Resultat-kalkulator</display-name>
+  <description>Vis flere resultater basert på brukerens svar</description>
+  <super-type>base:structured</super-type>
+  <allow-child-content-type>${app}:*</allow-child-content-type>
+  <allow-child-content-type>base:folder</allow-child-content-type>
+  <form>
+    <item-set name="resultGroup">
+      <label>Resultatgruppe</label>
+      <help-text>Maks ett svar i hver resultatgruppe vil vises. Dette gjør at du kan kun vise det viktigste
+        svaret. Den øverste resultatgruppa vil vises først
+      </help-text>
+      <occurrences minimum="0" maximum="0" />
+      <items>
+        <input name="result" type="ContentSelector">
+          <label>Resultat</label>
+          <help-text>Det øverste resultatet som oppfyller sine egne betingelser vil vises.</help-text>
+          <occurrences minimum="1" maximum="0" />
+          <config>
+            <allowContentType>result-with-conditions</allowContentType>
+            <allowPath>./*</allowPath>
+          </config>
+        </input>
+      </items>
+    </item-set>
+  </form>
+</content-type>

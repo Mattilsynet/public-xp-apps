@@ -10,26 +10,26 @@ export type Logical = {
     "logical-operator"?: "and" | "or" | "not";
 
 
-    answerOrLogic?: Array<
+    choiceOrLogic?: Array<
       | {
           /**
            * Selected
            */
-          _selected: "answer";
+          _selected: "choice";
 
           /**
-           * Svar
+           * Valg
            */
-          answer: {
+          choice: {
             /**
              * Logisk operator for denne boksen
              */
             logicalOperator?: "and" | "or" | "not";
 
             /**
-             * Svar
+             * Valg
              */
-            answers: Array<string> | string;
+            choices: Array<string> | string;
           };
         }
       | {
@@ -55,9 +55,9 @@ export type Logical = {
               logicalOperator?: "and" | "or" | "not";
 
               /**
-               * Svar
+               * Valg
                */
-              answers: Array<string> | string;
+              choices: Array<string> | string;
             }>;
           };
         }

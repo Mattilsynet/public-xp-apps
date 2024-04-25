@@ -22,7 +22,9 @@
       <occurrences maximum="1" minimum="0" />
       <config>
         <exclude>*</exclude>
-        <include>Format | Bold Italic Strike RemoveFormat | BulletedList NumberedList Blockquote | Subscript Superscript | SpecialChar Anchor Image Macro Link Unlink | Table</include>
+        <include>Format | Bold Italic Strike RemoveFormat | BulletedList NumberedList Blockquote | Subscript Superscript
+          | SpecialChar Anchor Image Macro Link Unlink | Table
+        </include>
         <allowHeadings>h2 h3 h4</allowHeadings>
       </config>
     </input>

@@ -63,7 +63,7 @@ export type ConditionNumber = {
          */
         eq: {
           /**
-           * Mindre enn
+           * Lik
            */
           number?: number;
         };
@@ -79,7 +79,7 @@ export type ConditionNumber = {
          */
         neq: {
           /**
-           * Mindre enn
+           * Ulik
            */
           number?: number;
         };

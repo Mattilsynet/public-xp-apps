@@ -6,37 +6,21 @@ export type Question = {
   question: string;
 
   /**
-   * Svartype
+   * Valgtype
    */
-  answerType:
+  choiceType:
     | {
         /**
          * Selected
          */
-        _selected: "radiobutton";
+        _selected: "radio";
 
         /**
          * Radioknapper
          */
-        radiobutton: {
+        radio: {
           /**
-           * Grener / stier
-           */
-          nextStep?: Array<string> | string;
-        };
-      }
-    | {
-        /**
-         * Selected
-         */
-        _selected: "number";
-
-        /**
-         * Tall
-         */
-        number: {
-          /**
-           * Grener / stier
+           * Grener
            */
           nextStep?: Array<string> | string;
         };
@@ -52,7 +36,23 @@ export type Question = {
          */
         checkbox: {
           /**
-           * Grener / stier
+           * Grener
+           */
+          nextStep?: Array<string> | string;
+        };
+      }
+    | {
+        /**
+         * Selected
+         */
+        _selected: "number";
+
+        /**
+         * Tall
+         */
+        number: {
+          /**
+           * Grener
            */
           nextStep?: Array<string> | string;
         };

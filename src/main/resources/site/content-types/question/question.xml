@@ -8,21 +8,24 @@
 
 	<form>
 		<input name="question" type="TextLine">
-			<label i18n="wizardStep.questionOrTitle">Spørsmål</label>
+			<label i18n="">Spørsmål</label>
 			<occurrences minimum="1" maximum="1" />
 		</input>
 
-		<option-set name="answerType">
-			<label i18n="wizardStep.inputType">Svartype</label>
+		<option-set name="choiceType">
+			<label i18n="">Valgtype</label>
 			<occurrences minimum="1" maximum="1" />
-			<help-text
-				i18n="wizardStep.inputTypeHelpText">Velg hvordan brukeren skal fylle inn svarene</help-text>
+			<help-text i18n="">Velg hvordan brukeren skal svare på valgene</help-text>
 			<options minimum="1" maximum="1">
-				<option name="radiobutton">
-					<label i18n="multiPageForm.radioButtons">Radioknapper</label>
+				<option name="radio">
+					<label i18n="">Radioknapper</label>
+					<help-text>Brukeren skal svare på dette spørsmålet med radioknapper</help-text>
 					<items>
 						<input name="nextStep" type="ContentSelector">
-							<label i18n="common.nextStep">Grener / stier</label>
+							<label i18n="">Grener</label>
+							<help-text>En gren er en retning vi vil sende brukeren basert på om brukeren har valgt ett
+								eller flere av valgene som ligger i grenen
+							</help-text>
 							<occurrences minimum="0" maximum="0" />
 							<config>
 								<allowContentType>branch-radio</allowContentType>
@@ -32,28 +35,36 @@
 					</items>
 				</option>
 
-				<option name="number">
-					<label i18n="wizardStep.numbers">Tall</label>
+				<option name="checkbox">
+					<label i18n="">Sjekkboks</label>
+					<help-text>Brukeren skal svare på dette spørsmålet ved å huke av sjekkbokser</help-text>
 					<items>
 						<input name="nextStep" type="ContentSelector">
-							<label i18n="common.nextStep">Grener / stier</label>
+							<label i18n="">Grener</label>
+							<help-text>En gren er en retning vi vil sende brukeren basert på om brukeren har valgt ett
+								eller flere av valgene som ligger i grenen
+							</help-text>
 							<occurrences minimum="0" maximum="0" />
 							<config>
-								<allowContentType>branch-number</allowContentType>
+								<allowContentType>branch-checkbox</allowContentType>
 								<allowPath>./*</allowPath>
 							</config>
 						</input>
 					</items>
 				</option>
 
-				<option name="checkbox">
-					<label i18n="wizardStep.checkbox">Sjekkboks</label>
+				<option name="number">
+					<label i18n="">Tall</label>
+					<help-text>Brukeren skal svare på dette spørsmålet ved å fylle inn tall</help-text>
 					<items>
 						<input name="nextStep" type="ContentSelector">
-							<label i18n="common.nextStep">Grener / stier</label>
+							<label i18n="">Grener</label>
+							<help-text>En gren er en retning vi vil sende brukeren basert på om brukeren har valgt ett
+								eller flere av valgene som ligger i grenen
+							</help-text>
 							<occurrences minimum="0" maximum="0" />
 							<config>
-								<allowContentType>branch-checkbox</allowContentType>
+								<allowContentType>branch-number</allowContentType>
 								<allowPath>./*</allowPath>
 							</config>
 						</input>

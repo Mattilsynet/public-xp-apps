@@ -1,0 +1,38 @@
+<mixin>
+  <form>
+    <option-set name="directOrRefChoices">
+      <label i18n="">Valgtype</label>
+      <occurrences minimum="1" maximum="1" />
+      <help-text i18n="">Bruk valg med referanse dersom du vil bruke valg-gruppe eller
+        resultat-kalkulator. Ellers er uten referanse det enkleste
+      </help-text>
+      <options maximum="1" minimum="1">
+        <option name="direct">
+          <label i18n="">Valg uten referanse</label>
+          <default>true</default>
+          <items>
+            <input name="choices" type="TextLine">
+              <label i18n="">Valg som fører til neste spørsmål eller resultat</label>
+              <occurrences minimum="1" maximum="0" />
+            </input>
+          </items>
+        </option>
+
+        <option name="reference">
+          <label i18n="">Valg med referanse</label>
+          <items>
+            <input name="choices" type="ContentSelector">
+              <label>Valg som fører til neste spørsmål eller resultat</label>
+              <occurrences minimum="1" maximum="0" />
+              <config>
+                <allowContentType>choice</allowContentType>
+                <allowContentType>choice-group</allowContentType>
+                <treeMode>true</treeMode>
+              </config>
+            </input>
+          </items>
+        </option>
+      </options>
+    </option-set>
+  </form>
+</mixin>

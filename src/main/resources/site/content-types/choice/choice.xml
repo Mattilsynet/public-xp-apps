@@ -1,0 +1,16 @@
+<content-type>
+  <display-name i18n="">Valg</display-name>
+  <display-name-label i18n="">Valg</display-name-label>
+  <display-name-expression>${text}</display-name-expression>
+  <description
+    i18n="">Valg som kan refereres til dersom man bruker resultat-kalkulator</description>
+  <super-type>base:structured</super-type>
+  <allow-child-content-type>a^</allow-child-content-type> <!-- a^ does not match anything -->
+
+  <form>
+    <input name="text" type="TextLine">
+      <label>Valgtekst</label>
+      <occurrences maximum="1" minimum="1" />
+    </input>
+  </form>
+</content-type>

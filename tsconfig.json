@@ -27,6 +27,7 @@
 			"/lib/xp/*": ["node_modules/@enonic-types/lib-*"],
 			"/lib/*": ["node_modules/@item-enonic-types/lib-*" ,"src/main/resources/lib/*"],
 			"/*": ["src/main/resources/*"], // So one can import local files using absolute path (same as Enonic does during runtime).
+      "/codegen/*": [".xp-codegen/*"]
 		},
 
 		// By default all visible ”@types” packages are included in your compilation.
