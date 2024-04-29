@@ -22,7 +22,7 @@ export type ResultWithConditions = {
     /**
      * Logisk operator for denne boksen
      */
-    "logical-operator"?: "and" | "or" | "not";
+    logicalOperator?: "and" | "or" | "not";
 
 
     choiceOrLogic?: Array<

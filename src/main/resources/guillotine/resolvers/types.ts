@@ -1,4 +1,5 @@
 import { BranchNumber, Question, Result } from '/codegen/site/content-types'
+import { LogicalOperator } from '/codegen/site/mixins/logical-operator'
 
 export type TranslatedChoiceMap = Record<
   string,
@@ -23,24 +24,51 @@ export type ChoiceMaps = {
   translatedChoices: TranslatedChoiceMap
 }
 
+type Operator = LogicalOperator['logicalOperator']
+type TreeDisplayCriteriaChoice = {
+  type: 'choice'
+  operator: Operator
+  choices: Array<string>
+}
+
+type TreeDisplayCriteriaLogic = {
+  type: 'logic'
+  operator: Operator
+  logic: Array<Omit<TreeDisplayCriteriaChoice, 'type'>>
+}
+
+export type TreeResultWithConditions = {
+  displayCriteria: {
+    operator: Operator
+    logic: Array<TreeDisplayCriteriaLogic | TreeDisplayCriteriaChoice>
+  }
+}
+
+export type TreeResultGroups = Array<Array<TreeResultWithConditions>>
+export type TreeResultCalculatorNode = {
+  type: string
+  fallbackResult?: string
+  resultGroups: TreeResultGroups
+}
 export type TreeQuestionNode = {
   type: string
-  choiceType: Question['choiceType']['_selected']
   targets?: Array<string>
   question?: string
+  choiceType: Question['choiceType']['_selected']
+  choices?: Array<string>
 }
 type TreeResultNode = { type: string } & Result
-export type TreeNode = TreeQuestionNode | TreeResultNode
+export type TreeNode = TreeQuestionNode | TreeResultNode | TreeResultCalculatorNode
 export type TreeNodes = Record<string, TreeNode>
 
-type LogicOperator = BranchNumber['conditionalChoiceTotal']['numberCondition']['_selected']
+type NumberLogicOperator = BranchNumber['conditionalChoiceTotal']['numberCondition']['_selected']
 type TotalNumberCondition = {
-  operator?: LogicOperator
+  operator?: NumberLogicOperator
   value?: number
   target?: string
 }
 export type SpecificNumberCondition = {
-  operator?: LogicOperator
+  operator?: NumberLogicOperator
   value?: number
   choices: Array<string>
   target?: string

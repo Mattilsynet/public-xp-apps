@@ -3,6 +3,8 @@ import { Request } from '/types'
 import { forceArray } from '@enonic/js-utils'
 import { Content } from '@enonic-types/lib-content'
 import { BranchNumber } from '/codegen/site/content-types'
+import { assetUrl } from '/lib/xp/portal'
+import { wizardType } from '/guillotine/resolvers/type-check'
 
 export function get(request: Request) {
   const key = request.path.match(/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/)?.[0]
@@ -25,7 +27,11 @@ export function get(request: Request) {
       },
     }
   } else if (directOrRefChoices?._selected === 'reference') {
+    const iconUrlChoice = assetUrl({ path: 'choice.svg' })
+    const iconUrlChoiceGroup = assetUrl({ path: 'choice-group.svg' })
+
     const res = query({
+      count: -1,
       filters: {
         boolean: {
           must: {
@@ -37,8 +43,9 @@ export function get(request: Request) {
       },
     }).hits.map((hit, i) => ({
       id: hit._id,
+      iconUrl: hit.type === wizardType('choice') ? iconUrlChoice : iconUrlChoiceGroup,
       displayName: hit.displayName,
-      description: 'Valg med referanse',
+      description: hit._path,
     }))
 
     return {

@@ -35,6 +35,22 @@ export type BranchCheckbox = {
            */
           choices: Array<string> | string;
         };
+      }
+    | {
+        /**
+         * Selected
+         */
+        _selected: "referenceOutside";
+
+        /**
+         * Valg med referanse som ligger utenfor veiviseren
+         */
+        referenceOutside: {
+          /**
+           * Valg som fører til neste spørsmål eller resultat. Se info hvis tom
+           */
+          choices: Array<string> | string;
+        };
       };
 
   /**

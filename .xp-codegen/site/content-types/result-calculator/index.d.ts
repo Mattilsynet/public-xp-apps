@@ -3,10 +3,15 @@ export type ResultCalculator = {
   /**
    * Resultatgruppe
    */
-  resultGroup?: Array<{
+  resultGroups?: Array<{
     /**
      * Resultat
      */
     result: Array<string> | string;
   }>;
+
+  /**
+   * Resultat som vises hvis ingen av resultatene i gruppene overfor vises
+   */
+  fallbackResult?: string;
 }

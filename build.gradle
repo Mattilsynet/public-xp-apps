@@ -135,8 +135,8 @@ tasks.register('npmBuild', NpmTask) {
 	outputs.dir 'build/resources/main'
 }
 
-jar.dependsOn npmBuild
 jar.dependsOn generateTypeScript
+jar.dependsOn npmBuild
 
 processResources {
 	exclude '**/.gitkeep'

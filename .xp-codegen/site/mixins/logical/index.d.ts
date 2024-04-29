@@ -7,7 +7,7 @@ export type Logical = {
     /**
      * Logisk operator for denne boksen
      */
-    "logical-operator"?: "and" | "or" | "not";
+    logicalOperator: "and" | "or" | "not";
 
 
     choiceOrLogic?: Array<
@@ -24,7 +24,28 @@ export type Logical = {
             /**
              * Logisk operator for denne boksen
              */
-            logicalOperator?: "and" | "or" | "not";
+            logicalOperator: "and" | "or" | "not";
+
+            /**
+             * Valg
+             */
+            choices: Array<string> | string;
+          };
+        }
+      | {
+          /**
+           * Selected
+           */
+          _selected: "choiceOutside";
+
+          /**
+           * Valg som ligger utenfor veiviseren
+           */
+          choiceOutside: {
+            /**
+             * Logisk operator for denne boksen
+             */
+            logicalOperator: "and" | "or" | "not";
 
             /**
              * Valg
@@ -45,14 +66,14 @@ export type Logical = {
             /**
              * Logisk operator for denne boksen
              */
-            logicalOperator?: "and" | "or" | "not";
+            logicalOperator: "and" | "or" | "not";
 
 
             logic: Array<{
               /**
                * Logisk operator for denne boksen
                */
-              logicalOperator?: "and" | "or" | "not";
+              logicalOperator: "and" | "or" | "not";
 
               /**
                * Valg

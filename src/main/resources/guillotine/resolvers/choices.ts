@@ -8,6 +8,7 @@ import { Choice, ChoiceGroup } from '/codegen/site/content-types'
 
 export function getChoiceMaps(): ChoiceMaps {
   const choices = query<Content<Choice>>({
+    count: -1,
     filters: {
       hasValue: {
         field: 'type',
@@ -16,6 +17,7 @@ export function getChoiceMaps(): ChoiceMaps {
     },
   }).hits
   const choiceGroups = query<Content<ChoiceGroup>>({
+    count: -1,
     filters: {
       hasValue: {
         field: 'type',
@@ -68,13 +70,13 @@ export function getChoiceMaps(): ChoiceMaps {
  */
 export function translateChoices(
   choices: Array<string> | string,
-  _selected: 'direct' | 'reference' | undefined,
+  _selected: 'direct' | 'reference' | 'referenceOutside' | undefined,
   choiceMaps: ChoiceMaps
 ) {
   const { choiceMap, choiceGroupMap, translatedChoices } = choiceMaps
   if (!choices) {
     return []
-  } else if (_selected === 'reference') {
+  } else if (_selected === 'reference' || _selected === 'referenceOutside') {
     return forceArray(choices).map((choiceKeyUUID) => {
       const choiceValue = choiceMap[choiceKeyUUID] ?? choiceGroupMap[choiceKeyUUID]
       const choiceKey = stringToKey(choiceValue.text)

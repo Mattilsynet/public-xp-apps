@@ -3,16 +3,18 @@ import { isTreeQuestionNode, wizardType } from '/guillotine/resolvers/type-check
 import { resolveEdgeWithNumberInputCondition } from '/guillotine/resolvers/conditions'
 import { BranchCheckbox, BranchNumber, BranchRadio } from '/codegen/site/content-types'
 import { Content } from '@enonic-types/lib-content'
-import { getChoiceMaps, translateChoices } from '/guillotine/resolvers/choices'
-import { TranslatedChoiceMap, TreeEdges, TreeNodes } from '/guillotine/resolvers/types'
+import { translateChoices } from '/guillotine/resolvers/choices'
+import { ChoiceMaps, TreeEdges, TreeNodes } from '/guillotine/resolvers/types'
 
 export function resolveEdges(
   wizardPath: string,
   nodes: TreeNodes,
+  choiceMaps: ChoiceMaps,
   errors: Array<string>
-): { edges: TreeEdges; choices: TranslatedChoiceMap } {
+): TreeEdges {
   const edges = query<Content<BranchNumber | BranchCheckbox | BranchRadio>>({
     query: `_path LIKE '/content${wizardPath}/*'`,
+    count: -1,
     filters: {
       hasValue: {
         field: 'type',
@@ -25,37 +27,42 @@ export function resolveEdges(
     },
   }).hits
 
-  const choiceMaps = getChoiceMaps()
   const edgeToNodeSourceMap = createEdgeToNodeSourceMap(nodes, errors)
 
-  const mappedEdges: TreeEdges = edges.reduce((acc: TreeEdges, edge) => {
+  return edges.reduce((acc: TreeEdges, edge) => {
     const conditionals = resolveEdgeWithNumberInputCondition(edge, choiceMaps)
 
     const directOrRef = edge.data.directOrRefChoices?._selected
+    const choices = translateChoices(
+      edge.data.directOrRefChoices?.[directOrRef]?.choices,
+      directOrRef,
+      choiceMaps
+    )
+
+    const source = edgeToNodeSourceMap[edge._id]
+    if (!source) {
+      errors.push(
+        `Fant ikke spørsmålet som fører til grenen! spørsmål:${source} gren:${edge.displayName}`
+      )
+    }
     return {
       ...acc,
       [edge._id]: {
         type: edge.type,
-        source: edgeToNodeSourceMap[edge._id],
+        source,
         target: edge.data.nextQuestionOrResult,
-        choices: translateChoices(
-          edge.data.directOrRefChoices?.[directOrRef]?.choices,
-          directOrRef,
-          choiceMaps
-        ),
+        choices,
         conditionals,
       },
     }
   }, {})
-
-  return {
-    edges: mappedEdges,
-    choices: choiceMaps.translatedChoices,
-  }
 }
 
 /* create a reversed node -> edge map to quickly find the node source of the edge */
-function createEdgeToNodeSourceMap(nodes: TreeNodes, errors: Array<string>) {
+function createEdgeToNodeSourceMap(
+  nodes: TreeNodes,
+  errors: Array<string>
+): Record<string, string> {
   const edgeToNodeMap = {}
   for (const key in nodes) {
     const node = nodes[key]

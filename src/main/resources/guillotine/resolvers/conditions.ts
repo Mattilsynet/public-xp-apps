@@ -33,12 +33,12 @@ export function resolveEdgeWithNumberInputCondition(
     const specificNumberConditions = forceArray(
       data.conditionalChoice
     ).map<SpecificNumberCondition>((conditionalChoice) => {
-      const operator = conditionalChoice.numberCondition?._selected
       const choices = translateChoices(
         conditionalChoice.choices,
         data.directOrRefChoices?._selected,
         choiceMaps
       )
+      const operator = conditionalChoice.numberCondition?._selected
       return {
         operator,
         value: conditionalChoice.numberCondition?.[operator]?.number,

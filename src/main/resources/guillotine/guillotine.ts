@@ -4,6 +4,7 @@ import { get } from '/lib/xp/content'
 import { Wizard } from '/codegen/site/content-types'
 import { resolveEdges } from '/guillotine/resolvers/edges'
 import { resolveNodes } from '/guillotine/resolvers/nodes'
+import { getChoiceMaps } from '/guillotine/resolvers/choices'
 
 export function extensions(graphQL: GraphQL): GuillotineExtensions {
   const { GraphQLString, GraphQLBoolean, Json, reference, list } = graphQL
@@ -42,14 +43,16 @@ export function extensions(graphQL: GraphQL): GuillotineExtensions {
             return undefined
           }
           const errors: Array<string> = []
+          const choiceMaps = getChoiceMaps()
 
-          const nodes = resolveNodes(wizardPath, errors)
-          const { edges, choices } = resolveEdges(wizardPath, nodes, errors)
+          const nodes = resolveNodes(wizardPath, choiceMaps, errors)
+          const edges = resolveEdges(wizardPath, nodes, choiceMaps, errors)
+
           return {
             rootNode: env.source.question,
             nodes,
             edges,
-            choices,
+            choices: choiceMaps.translatedChoices,
             errors,
             validTree: errors.length === 0,
           }
