@@ -59,6 +59,12 @@ export type TreeQuestionNode = {
   question?: string
   choiceType: Question['choiceType']['_selected']
   choices?: Array<string>
+  errorMessages: {
+    required: string
+    // number branch specific
+    greaterThanZero?: string
+    isNumber?: string
+  }
 }
 export type TreeResultNode = { type: string } & Result
 export type TreeNode = TreeQuestionNode | TreeResultNode | TreeResultCalculatorNode

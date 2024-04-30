@@ -148,10 +148,12 @@ function getQuestionAndResultNodes(
     let mapped: Omit<TreeNode, 'type'>
     if (isQuestionNode(node)) {
       const choiceType = node.data.choiceType?._selected
+      const choiceTypeData = node.data.choiceType?.[choiceType]
       mapped = {
-        question: node.data.question,
-        targets: forceArray(node.data.choiceType?.[choiceType]?.nextStep ?? []),
         choiceType,
+        question: node.data.question,
+        targets: forceArray(choiceTypeData?.nextStep ?? []),
+        errorMessages: choiceTypeData.errorMessages,
       }
     } else if (node.type === wizardType('result')) {
       mapped = node.data

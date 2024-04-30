@@ -32,6 +32,14 @@
 								<allowPath>./*</allowPath>
 							</config>
 						</input>
+
+            <item-set name="errorMessages">
+              <label>Feilmeldinger</label>
+              <occurrences minimum="1" maximum="1" />
+              <items>
+                <mixin name="required-input-feedback-text" />
+              </items>
+            </item-set>
 					</items>
 				</option>
 
@@ -50,6 +58,14 @@
 								<allowPath>./*</allowPath>
 							</config>
 						</input>
+
+            <item-set name="errorMessages">
+              <label>Feilmeldinger</label>
+              <occurrences minimum="1" maximum="1" />
+              <items>
+                <mixin name="required-input-feedback-text" />
+              </items>
+            </item-set>
 					</items>
 				</option>
 
@@ -68,6 +84,24 @@
 								<allowPath>./*</allowPath>
 							</config>
 						</input>
+
+            <item-set name="errorMessages">
+              <label>Feilmeldinger</label>
+              <occurrences minimum="1" maximum="1" />
+              <items>
+                <mixin name="required-input-feedback-text" />
+                <input name="greaterThanZero" type="TextLine">
+                  <label>Større enn 0</label>
+                  <default>Tallet må være større enn 0</default>
+                  <occurrences minimum="1" maximum="1" />
+                </input>
+                <input name="isNumber" type="TextLine">
+                  <label>Svaret må være et tall</label>
+                  <default>Du må bruke tall</default>
+                  <occurrences minimum="1" maximum="1" />
+                </input>
+              </items>
+            </item-set>
 					</items>
 				</option>
 			</options>

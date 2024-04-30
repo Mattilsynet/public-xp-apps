@@ -23,6 +23,16 @@ export type Question = {
            * Grener
            */
           nextStep?: Array<string> | string;
+
+          /**
+           * Feilmeldinger
+           */
+          errorMessages: {
+            /**
+             * Påkrevd
+             */
+            required?: string;
+          };
         };
       }
     | {
@@ -39,6 +49,16 @@ export type Question = {
            * Grener
            */
           nextStep?: Array<string> | string;
+
+          /**
+           * Feilmeldinger
+           */
+          errorMessages: {
+            /**
+             * Påkrevd
+             */
+            required?: string;
+          };
         };
       }
     | {
@@ -55,6 +75,26 @@ export type Question = {
            * Grener
            */
           nextStep?: Array<string> | string;
+
+          /**
+           * Feilmeldinger
+           */
+          errorMessages: {
+            /**
+             * Påkrevd
+             */
+            required?: string;
+
+            /**
+             * Større enn 0
+             */
+            greaterThanZero: string;
+
+            /**
+             * Svaret må være et tall
+             */
+            isNumber: string;
+          };
         };
       };
 }
