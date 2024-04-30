@@ -28,7 +28,6 @@ export function resolveEdges(
   }).hits
 
   const edgeToNodeSourceMap = createEdgeToNodeSourceMap(nodes, errors)
-
   return edges.reduce((acc: TreeEdges, edge) => {
     const conditionals = resolveEdgeWithNumberInputCondition(edge, choiceMaps)
 

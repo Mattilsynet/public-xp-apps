@@ -68,18 +68,53 @@ export type Logical = {
              */
             logicalOperator: "and" | "or" | "not";
 
+            /**
+             * Betingelser for tall-input
+             */
+            choiceOrChoiceOutside: Array<
+              | {
+                  /**
+                   * Selected
+                   */
+                  _selected: "choice";
 
-            logic: Array<{
-              /**
-               * Logisk operator for denne boksen
-               */
-              logicalOperator: "and" | "or" | "not";
+                  /**
+                   * Valg
+                   */
+                  choice: {
+                    /**
+                     * Logisk operator for denne boksen
+                     */
+                    logicalOperator: "and" | "or" | "not";
 
-              /**
-               * Valg
-               */
-              choices: Array<string> | string;
-            }>;
+                    /**
+                     * Valg
+                     */
+                    choices: Array<string> | string;
+                  };
+                }
+              | {
+                  /**
+                   * Selected
+                   */
+                  _selected: "choiceOutside";
+
+                  /**
+                   * Valg som ligger utenfor veiviseren
+                   */
+                  choiceOutside: {
+                    /**
+                     * Logisk operator for denne boksen
+                     */
+                    logicalOperator: "and" | "or" | "not";
+
+                    /**
+                     * Valg
+                     */
+                    choices: Array<string> | string;
+                  };
+                }
+            >;
           };
         }
     >;

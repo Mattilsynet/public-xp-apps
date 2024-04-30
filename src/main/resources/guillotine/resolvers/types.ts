@@ -1,5 +1,6 @@
 import { BranchNumber, Question, Result } from '/codegen/site/content-types'
 import { LogicalOperator } from '/codegen/site/mixins/logical-operator'
+import { CoreCommon } from '/codegen/site/mixins/core-common'
 
 export type TranslatedChoiceMap = Record<
   string,
@@ -25,7 +26,7 @@ export type ChoiceMaps = {
 }
 
 type Operator = LogicalOperator['logicalOperator']
-type TreeDisplayCriteriaChoice = {
+export type TreeDisplayCriteriaChoice = {
   type: 'choice'
   operator: Operator
   choices: Array<string>
@@ -34,21 +35,23 @@ type TreeDisplayCriteriaChoice = {
 type TreeDisplayCriteriaLogic = {
   type: 'logic'
   operator: Operator
-  logic: Array<Omit<TreeDisplayCriteriaChoice, 'type'>>
+  logic: Array<TreeDisplayCriteriaChoice>
 }
 
+export type TreeChoiceOrLogic = TreeDisplayCriteriaLogic | TreeDisplayCriteriaChoice
 export type TreeResultWithConditions = {
   displayCriteria: {
+    type: TreeDisplayCriteriaLogic['type']
     operator: Operator
-    logic: Array<TreeDisplayCriteriaLogic | TreeDisplayCriteriaChoice>
+    logic: Array<TreeChoiceOrLogic>
   }
-}
+} & CoreCommon
 
 export type TreeResultGroups = Array<Array<TreeResultWithConditions>>
 export type TreeResultCalculatorNode = {
   type: string
-  fallbackResult?: string
   resultGroups: TreeResultGroups
+  fallbackResult?: CoreCommon
 }
 export type TreeQuestionNode = {
   type: string
@@ -57,7 +60,7 @@ export type TreeQuestionNode = {
   choiceType: Question['choiceType']['_selected']
   choices?: Array<string>
 }
-type TreeResultNode = { type: string } & Result
+export type TreeResultNode = { type: string } & Result
 export type TreeNode = TreeQuestionNode | TreeResultNode | TreeResultCalculatorNode
 export type TreeNodes = Record<string, TreeNode>
 

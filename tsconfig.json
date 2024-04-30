@@ -82,6 +82,7 @@
 	"exclude": [
 		"src/main/resources/assets/**/*.*",
 		"src/main/resources/static/**/*.*",
+    "./src/main/resources/polyfills.js"
 	],
 	"include": [
 		"./.xp-codegen/**/*",

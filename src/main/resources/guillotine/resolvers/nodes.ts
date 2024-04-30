@@ -14,13 +14,22 @@ import {
 } from '/guillotine/resolvers/types'
 import { translateChoices } from '/guillotine/resolvers/choices'
 import { Logical } from '/codegen/site/mixins/logical'
+import { Content } from '@enonic-types/lib-content'
+import {
+  Question,
+  Result,
+  ResultCalculator,
+  ResultWithConditions,
+} from '/codegen/site/content-types'
+
+type WizardNodes = Content<Question | Result | ResultCalculator | ResultWithConditions>
 
 export function resolveNodes(
   wizardPath: string,
   choiceMaps: ChoiceMaps,
   errors: Array<string>
 ): TreeNodes {
-  const nodes = query({
+  const nodes = query<WizardNodes>({
     query: `_path LIKE '/content${wizardPath}/*'`,
     count: -1,
     filters: {
@@ -38,21 +47,31 @@ export function resolveNodes(
     sort: 'type DESC',
   }).hits
 
+  const questionAndResultNodes = getQuestionAndResultNodes(nodes, errors)
+  const resultCalculatorNodes = getResultCalculatorNodes(
+    nodes,
+    questionAndResultNodes,
+    errors,
+    choiceMaps
+  )
+  return { ...questionAndResultNodes, ...resultCalculatorNodes }
+}
+
+function getResultCalculatorNodes(
+  nodes: WizardNodes[],
+  questionAndResultNodes: Record<string, TreeNode>,
+  errors: Array<string>,
+  choiceMaps: ChoiceMaps
+): Record<string, TreeNode> {
   const resultWithConditions: Record<string, TreeResultWithConditions> = {}
+
   return nodes.reduce((acc: TreeNodes, node) => {
     let mapped: Omit<TreeNode, 'type'>
-    if (isQuestionNode(node)) {
-      const choiceType = node.data.choiceType?._selected
-      mapped = {
-        question: node.data.question,
-        targets: forceArray(node.data.choiceType?.[choiceType]?.nextStep ?? []),
-        choiceType,
-      }
-    } else if (node.type === wizardType('result')) {
-      mapped = node.data
-    } else if (isResultCalculatorNode(node)) {
+    if (isResultCalculatorNode(node)) {
+      const fallbackResultUUID = node.data.fallbackResult
       mapped = {
         ...node.data,
+        fallbackResult: fallbackResultUUID ? questionAndResultNodes[fallbackResultUUID] : undefined,
         resultGroups: forceArray(node.data.resultGroups ?? []).map((resultGroup) => {
           return forceArray(resultGroup.result ?? []).map<TreeResultWithConditions>((result) => {
             const resultsWithCondition = resultWithConditions[result]
@@ -69,6 +88,7 @@ export function resolveNodes(
       resultWithConditions[node._id] = {
         ...node.data,
         displayCriteria: {
+          type: 'logic',
           operator: node.data.displayCriteria.logicalOperator,
           // issue with codegen nested mixins? type cast Logical to fix
           logic: forceArray((node.data as Logical).displayCriteria.choiceOrLogic ?? []).map(
@@ -82,14 +102,18 @@ export function resolveNodes(
                 }
               } else if (type === 'logic') {
                 return {
-                  type,
+                  type: 'logic',
                   operator: choiceOrLogic.logic.logicalOperator,
-                  logic: forceArray(choiceOrLogic.logic.logic ?? []).map((logic) => {
-                    return {
-                      operator: logic.logicalOperator,
-                      choices: translateChoices(logic.choices, 'reference', choiceMaps),
+                  logic: forceArray(choiceOrLogic.logic.choiceOrChoiceOutside ?? []).map(
+                    (choiceOrChoiceOutside) => {
+                      const choice = choiceOrChoiceOutside[choiceOrChoiceOutside._selected]
+                      return {
+                        type: 'choice',
+                        operator: choice.logicalOperator,
+                        choices: translateChoices(choice.choices, 'reference', choiceMaps),
+                      }
                     }
-                  }),
+                  ),
                 }
               } else {
                 errors.push(`Ukjent eller manglende kriterie for ${node.displayName}: ${type}`)
@@ -99,8 +123,43 @@ export function resolveNodes(
         },
       }
       return acc
-    } else {
+    } else if (!isQuestionNode(node) && node.type !== wizardType('result')) {
       errors.push(`Unknown node type: ${node.type}`)
+      return acc
+    } else {
+      return acc
+    }
+
+    return {
+      ...acc,
+      [node._id]: {
+        type: node.type,
+        ...mapped,
+      } as TreeNode,
+    }
+  }, {})
+}
+
+function getQuestionAndResultNodes(
+  nodes: Array<WizardNodes>,
+  errors: Array<string>
+): Record<string, TreeNode> {
+  return nodes.reduce((acc, node) => {
+    let mapped: Omit<TreeNode, 'type'>
+    if (isQuestionNode(node)) {
+      const choiceType = node.data.choiceType?._selected
+      mapped = {
+        question: node.data.question,
+        targets: forceArray(node.data.choiceType?.[choiceType]?.nextStep ?? []),
+        choiceType,
+      }
+    } else if (node.type === wizardType('result')) {
+      mapped = node.data
+    } else if (!isResultCalculatorNode(node) && !isResultWithConditions(node)) {
+      errors.push(`Unknown node type: ${node.type}`)
+      return acc
+    } else {
+      return acc
     }
 
     return {
