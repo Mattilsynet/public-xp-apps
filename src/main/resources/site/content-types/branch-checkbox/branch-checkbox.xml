@@ -11,6 +11,16 @@
 
   <form>
     <mixin name="choices" />
+
+    <input name="preferredChoices" type="CustomSelector">
+      <label i18n="">Foretrukne valg</label>
+      <help-text i18n="">Velg hvilke valg som skal vises øverst</help-text>
+      <occurrences minimum="0" maximum="1" />
+      <config>
+        <service>already-selected-choices-custom-selector</service>
+      </config>
+    </input>
+
     <mixin name="next-question-or-result" />
   </form>
 </content-type>

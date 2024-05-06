@@ -91,6 +91,7 @@ export type TreeEdge = {
   source: string
   target: string
   choices: string[]
+  preferredChoices?: string[]
   conditionals?: TreeEdgeNumberConditionals
 }
 export type TreeEdges = Record<string, TreeEdge>

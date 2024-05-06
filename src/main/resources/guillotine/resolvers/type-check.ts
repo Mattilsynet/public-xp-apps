@@ -1,5 +1,6 @@
 import { Content } from '/lib/xp/content'
 import {
+  BranchCheckbox,
   BranchNumber,
   Choice,
   ChoiceGroup,
@@ -13,6 +14,9 @@ export const wizardType = (type: string) => `${app.name}:${type}`
 
 export const isNumberEdge = (edge: Content<unknown>): edge is Content<BranchNumber> =>
   edge.type === wizardType('branch-number')
+
+export const isCheckboxEdge = (edge: Content<unknown>): edge is Content<BranchCheckbox> =>
+  edge.type === wizardType('branch-checkbox')
 
 export const isQuestionNode = (node: Content<unknown>): node is Content<Question> =>
   node.type === wizardType('question')

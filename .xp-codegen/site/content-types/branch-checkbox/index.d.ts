@@ -54,6 +54,11 @@ export type BranchCheckbox = {
       };
 
   /**
+   * Foretrukne valg
+   */
+  preferredChoices?: string;
+
+  /**
    * Neste spørsmål eller resultat
    */
   nextQuestionOrResult: string;

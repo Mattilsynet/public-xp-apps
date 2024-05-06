@@ -1,10 +1,12 @@
 import { query } from '/lib/xp/content'
-import { isTreeQuestionNode, wizardType } from '/guillotine/resolvers/type-check'
+import { isCheckboxEdge, isTreeQuestionNode, wizardType } from '/guillotine/resolvers/type-check'
 import { resolveEdgeWithNumberInputCondition } from '/guillotine/resolvers/conditions'
 import { BranchCheckbox, BranchNumber, BranchRadio } from '/codegen/site/content-types'
 import { Content } from '@enonic-types/lib-content'
 import { translateChoices } from '/guillotine/resolvers/choices'
 import { ChoiceMaps, TreeEdges, TreeNodes } from '/lib/types'
+
+require('../../polyfills.js')
 
 export function resolveEdges(
   wizardPath: string,
@@ -32,11 +34,19 @@ export function resolveEdges(
     const conditionals = resolveEdgeWithNumberInputCondition(edge, choiceMaps)
 
     const directOrRef = edge.data.directOrRefChoices?._selected
-    const choices = translateChoices(
+    let choices = translateChoices(
       edge.data.directOrRefChoices?.[directOrRef]?.choices,
       directOrRef,
       choiceMaps
     )
+
+    let preferredChoices: undefined | string[]
+    if (isCheckboxEdge(edge)) {
+      preferredChoices = translateChoices(edge.data.preferredChoices, directOrRef, choiceMaps)
+      choices = choices.filter(
+        (choice) => !preferredChoices.find((preferred) => choice === preferred)
+      )
+    }
 
     const source = edgeToNodeSourceMap[edge._id]
     if (!source) {
@@ -51,6 +61,7 @@ export function resolveEdges(
         source,
         target: edge.data.nextQuestionOrResult,
         choices,
+        preferredChoices,
         conditionals,
       },
     }
