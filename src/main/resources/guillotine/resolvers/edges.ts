@@ -4,7 +4,7 @@ import { resolveEdgeWithNumberInputCondition } from '/guillotine/resolvers/condi
 import { BranchCheckbox, BranchNumber, BranchRadio } from '/codegen/site/content-types'
 import { Content } from '@enonic-types/lib-content'
 import { translateChoices } from '/guillotine/resolvers/choices'
-import { ChoiceMaps, TreeEdges, TreeNodes } from '/guillotine/resolvers/types'
+import { ChoiceMaps, TreeEdges, TreeNodes } from '/lib/types'
 
 export function resolveEdges(
   wizardPath: string,

@@ -7,7 +7,7 @@ import {
   ResultCalculator,
   ResultWithConditions,
 } from '/codegen/site/content-types'
-import { TreeNode, TreeQuestionNode } from '/guillotine/resolvers/types'
+import { TreeNode, TreeQuestionNode } from '/lib/types'
 
 export const wizardType = (type: string) => `${app.name}:${type}`
 

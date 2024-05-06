@@ -2,11 +2,7 @@ import { Content } from '/lib/xp/content'
 import { isNumberEdge } from '/guillotine/resolvers/type-check'
 import { forceArray } from '@enonic/js-utils'
 import { translateChoices } from '/guillotine/resolvers/choices'
-import {
-  ChoiceMaps,
-  SpecificNumberCondition,
-  TreeEdgeNumberConditionals,
-} from '/guillotine/resolvers/types'
+import { ChoiceMaps, SpecificNumberCondition, TreeEdgeNumberConditionals } from '/lib/types'
 
 export function resolveEdgeWithNumberInputCondition(
   edge: Content<unknown>,

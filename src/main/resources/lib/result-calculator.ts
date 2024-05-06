@@ -2,7 +2,7 @@ import {
   TreeDisplayCriteriaChoice,
   TreeResultCalculatorNode,
   TreeResultWithConditions,
-} from '/guillotine/resolvers/types'
+} from '/lib/types'
 import { CoreCommon } from '/codegen/site/mixins/core-common'
 
 require('../polyfills')

@@ -31,7 +31,7 @@ export type Question = {
             /**
              * Påkrevd
              */
-            required?: string;
+            required: string;
           };
         };
       }
@@ -57,7 +57,7 @@ export type Question = {
             /**
              * Påkrevd
              */
-            required?: string;
+            required: string;
           };
         };
       }
@@ -83,7 +83,7 @@ export type Question = {
             /**
              * Påkrevd
              */
-            required?: string;
+            required: string;
 
             /**
              * Større enn 0

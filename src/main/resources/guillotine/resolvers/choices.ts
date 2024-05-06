@@ -3,7 +3,7 @@ import { wizardType } from '/guillotine/resolvers/type-check'
 import { Content } from '@enonic-types/lib-content'
 import { forceArray } from '@enonic/js-utils'
 import { stringToKey } from '/lib/string-to-key'
-import { ChoiceMaps, UUIDChoiceMap } from '/guillotine/resolvers/types'
+import { ChoiceMaps, UUIDChoiceMap } from '/lib/types'
 import { Choice, ChoiceGroup } from '/codegen/site/content-types'
 
 export function getChoiceMaps(): ChoiceMaps {

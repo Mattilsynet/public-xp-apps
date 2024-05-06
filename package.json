@@ -1,5 +1,12 @@
 {
   "author": "Mattilsynet",
+  "name": "@mattilsynet/veiviser",
+  "version": "0.0.2",
+  "description": "Funksjoner for enonic veiviser",
+  "private": false,
+  "homepage": "https://mattilsynet.github.io/Mattilsynet",
+  "gitRepository": "https://github.com/Mattilsynet",
+  "license": "MIT",
   "scripts": {
     "clean": "rimraf build",
     "build": "concurrently -c auto -g --timings npm:build:*",
@@ -45,10 +52,10 @@
     "@enonic-types/lib-value": "^7",
     "@enonic-types/lib-vhost": "^7",
     "@enonic-types/lib-websocket": "^7",
-    "@item-enonic-types/lib-graphql": "^2.0.3",
     "@enonic/esbuild-plugin-copy-with-hash": "^0.2.0",
     "@enonic/mock-xp": "^0.10.0",
     "@enonic/tsup-plugin-manifest": "^0.0.1",
+    "@item-enonic-types/lib-graphql": "^2.0.3",
     "@jest/globals": "^29.6.4",
     "@prettier/plugin-xml": "^3.4.1",
     "@typescript-eslint/eslint-plugin": "^7",
@@ -57,8 +64,8 @@
     "esbuild-plugin-globals": "^0.2.0",
     "esbuild-sass-plugin": "^2.16.1",
     "eslint": "^8",
-    "eslint-plugin-jsx-a11y": "^6",
     "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-jsx-a11y": "^6",
     "glob": "^10.3.12",
     "jest": "^29.7.0",
     "prettier": "^3.2.5",
@@ -68,11 +75,25 @@
     "ts-jest": "^29.1.2",
     "tsup": "^8"
   },
-  "homepage": "https://developer.enonic.com/docs/tsup-starter",
-  "license": "Apache-2.0",
-  "private": true,
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/enonic/starter-tsup"
+  "keywords": [
+    "Wizard",
+    "Veiviser",
+    "Mattilsynet",
+    "Enonic"
+  ],
+  "files": [
+    "build/resources/main/lib",
+    "build/resources/main/_chunks",
+    "build/resources/main/index.js"
+  ],
+  "exports": {
+    ".": {
+      "types": "./build/resources/main/index.d.ts",
+      "require": "./build/resources/main/index.js",
+      "import": "./build/resources/main/index.js"
+    }
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "^4.17.2"
   }
 }

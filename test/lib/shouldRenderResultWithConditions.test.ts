@@ -3,7 +3,7 @@ import {
   shouldRenderResultWithConditions,
 } from '../../src/main/resources/lib/result-calculator'
 import { describe, expect, it } from '@jest/globals'
-import { TreeChoiceOrLogic, TreeResultCalculatorNode } from '/guillotine/resolvers/types'
+import { TreeChoiceOrLogic, TreeResultCalculatorNode } from '/lib/types'
 import Log from '@enonic/mock-xp/dist/Log'
 
 // @ts-ignore TS2339: Property 'log' does not exist on type 'typeof globalThis'.

@@ -6,12 +6,7 @@ import {
   wizardType,
 } from '/guillotine/resolvers/type-check'
 import { forceArray } from '@enonic/js-utils'
-import {
-  ChoiceMaps,
-  TreeNode,
-  TreeNodes,
-  TreeResultWithConditions,
-} from '/guillotine/resolvers/types'
+import { ChoiceMaps, TreeNode, TreeNodes, TreeResultWithConditions } from '/lib/types'
 import { translateChoices } from '/guillotine/resolvers/choices'
 import { Logical } from '/codegen/site/mixins/logical'
 import { Content } from '@enonic-types/lib-content'

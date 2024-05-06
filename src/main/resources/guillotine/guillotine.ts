@@ -44,7 +44,6 @@ export function extensions(graphQL: GraphQL): GuillotineExtensions {
           }
           const errors: Array<string> = []
           const choiceMaps = getChoiceMaps()
-
           const nodes = resolveNodes(wizardPath, choiceMaps, errors)
           const edges = resolveEdges(wizardPath, nodes, choiceMaps, errors)
 

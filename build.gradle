@@ -76,6 +76,14 @@ node {
 	version = '18.17.1'
 }
 
+tasks.register('updateNodePackageVersion', Task) {
+  def version = project.findProperty('version')
+  def packageJsonFile = file('package/package.json')
+  def packageJson = new groovy.json.JsonSlurper().parseText(packageJsonFile.text)
+  packageJson.version = version
+  packageJsonFile.write(new groovy.json.JsonBuilder(packageJson).toPrettyString())
+}
+
 tasks.withType(Copy).configureEach {
 	includeEmptyDirs = false
 }
@@ -134,6 +142,32 @@ tasks.register('npmBuild', NpmTask) {
 	inputs.dir 'src/main/resources'
 	outputs.dir 'build/resources/main'
 }
+
+tasks.register('npmPackageInstall', NpmTask) {
+  dependsOn updateNodePackageVersion
+  workingDir = file("${project.projectDir}/package")
+  args = [
+    'install',
+    '--silent'
+  ]
+}
+
+tasks.register('npmPackageBuild', NpmTask) {
+  workingDir = file("${project.projectDir}/package")
+	args = [
+		'run',
+		'--silent',
+		'build'
+	]
+	dependsOn npmPackageInstall
+	environment = [
+		'FORCE_COLOR': 'true',
+		'LOG_LEVEL_FROM_GRADLE': gradle.startParameter.logLevel.toString(),
+		'NODE_ENV': project.hasProperty('dev') || project.hasProperty('development') ? 'development' : 'production'
+	]
+}
+
+npmInstall.dependsOn npmPackageBuild
 
 jar.dependsOn generateTypeScript
 jar.dependsOn npmBuild
