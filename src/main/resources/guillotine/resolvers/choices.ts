@@ -92,6 +92,7 @@ export function translateChoices(
             stringToKey(choiceMap[choiceUUID]?.text)
           ),
         }
+        translateChoices(choiceValue.choices, _selected, choiceMaps)
       }
       return choiceKey
     })
