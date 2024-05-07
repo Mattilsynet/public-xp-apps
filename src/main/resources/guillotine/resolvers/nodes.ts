@@ -128,6 +128,7 @@ function getResultCalculatorNodes(
     return {
       ...acc,
       [node._id]: {
+        id: node._id,
         type: node.type,
         ...mapped,
       } as TreeNode,
@@ -162,6 +163,7 @@ function getQuestionAndResultNodes(
     return {
       ...acc,
       [node._id]: {
+        id: node._id,
         type: node.type,
         ...mapped,
       } as TreeNode,

@@ -54,6 +54,7 @@ export type TreeResultCalculatorNode = {
   fallbackResult?: CoreCommon
 }
 export type TreeQuestionNode = {
+  id: string
   type: string
   targets?: Array<string>
   question?: string
@@ -87,6 +88,7 @@ export type TreeEdgeNumberConditionals = {
   specificNumberConditions?: Array<SpecificNumberCondition>
 }
 export type TreeEdge = {
+  id: string
   type: string
   source: string
   target: string
