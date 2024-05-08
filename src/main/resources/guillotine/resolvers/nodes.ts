@@ -1,6 +1,7 @@
 import { query } from '/lib/xp/content'
 import {
   isQuestionNode,
+  isResult,
   isResultCalculatorNode,
   isResultWithConditions,
   wizardType,
@@ -16,6 +17,7 @@ import {
   ResultCalculator,
   ResultWithConditions,
 } from '/codegen/site/content-types'
+import { processHtml } from '/lib/xp/portal'
 
 type WizardNodes = Content<Question | Result | ResultCalculator | ResultWithConditions>
 
@@ -82,6 +84,7 @@ function getResultCalculatorNodes(
     } else if (isResultWithConditions(node)) {
       resultWithConditions[node._id] = {
         ...node.data,
+        text: processHtml({ value: node.data.text }),
         displayCriteria: {
           type: 'logic',
           operator: node.data.displayCriteria.logicalOperator,
@@ -151,8 +154,11 @@ function getQuestionAndResultNodes(
         targets: forceArray(choiceTypeData?.nextStep ?? []),
         errorMessages: choiceTypeData.errorMessages,
       }
-    } else if (node.type === wizardType('result')) {
-      mapped = node.data
+    } else if (isResult(node)) {
+      mapped = {
+        ...node.data,
+        text: processHtml({ value: node.data.text }),
+      }
     } else if (!isResultCalculatorNode(node) && !isResultWithConditions(node)) {
       errors.push(`Unknown node type: ${node.type}`)
       return acc

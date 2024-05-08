@@ -5,6 +5,7 @@ import {
   Choice,
   ChoiceGroup,
   Question,
+  Result,
   ResultCalculator,
   ResultWithConditions,
 } from '/codegen/site/content-types'
@@ -27,6 +28,9 @@ export const isResultCalculatorNode = (node: Content<unknown>): node is Content<
 export const isResultWithConditions = (
   node: Content<unknown>
 ): node is Content<ResultWithConditions> => node.type === wizardType('result-with-conditions')
+
+export const isResult = (node: Content<unknown>): node is Content<Result> =>
+  node.type === wizardType('result')
 
 export const isChoiceGroup = (node: Content<unknown>): node is Content<ChoiceGroup> =>
   node.type === wizardType('choice-group')
