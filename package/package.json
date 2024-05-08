@@ -1,7 +1,7 @@
 {
     "author": "Mattilsynet",
     "name": "@mattilsynet/veiviser",
-    "version": "1.1.1",
+    "version": "1.1.2",
     "description": "Funksjoner for enonic veiviser",
     "type": "module",
     "private": false,
@@ -24,9 +24,18 @@
     "scripts": {
         "build": "tsup"
     },
+    "dependencies": {
+        "@enonic/js-utils": "^1"
+    },
     "devDependencies": {
         "@types/node": "^20.12.8",
         "tsup": "^8",
         "typescript": "5.2.2"
-    }
+    },
+    "keywords": [
+        "Wizard",
+        "Veiviser",
+        "Mattilsynet",
+        "Enonic"
+    ]
 }
