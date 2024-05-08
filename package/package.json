@@ -1,11 +1,11 @@
 {
     "author": "Mattilsynet",
     "name": "@mattilsynet/veiviser",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "description": "Funksjoner for enonic veiviser",
     "type": "module",
     "private": false,
-    "homepage": "https://mattilsynet.github.io/Mattilsynet",
+    "homepage": "https://github.com/Mattilsynet",
     "gitRepository": "https://github.com/Mattilsynet",
     "license": "MIT",
     "main": "./dist/index.js",

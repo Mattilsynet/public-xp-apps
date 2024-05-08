@@ -1,9 +1,11 @@
 import {
+  TranslatedChoiceMap,
   TreeDisplayCriteriaChoice,
   TreeResultCalculatorNode,
   TreeResultWithConditions,
 } from '/lib/types'
 import { CoreCommon } from '/codegen/site/mixins/core-common'
+import { flatten } from '@enonic/js-utils'
 
 require('../polyfills')
 
@@ -12,11 +14,12 @@ require('../polyfills')
  */
 export function shouldRenderResultWithConditions(
   displayCriteria: TreeResultWithConditions['displayCriteria'] | TreeDisplayCriteriaChoice,
+  choiceMap: TranslatedChoiceMap,
   answers?: Array<string>
 ) {
   const { type, operator } = displayCriteria
   if (type === 'choice') {
-    const choices = displayCriteria.choices
+    const choices = getChoicesFromGroups(displayCriteria.choices, choiceMap)
     if (operator === 'and') {
       return choices.every((choice) => answers?.some((answer) => answer === choice))
     } else if (operator === 'or') {
@@ -27,11 +30,17 @@ export function shouldRenderResultWithConditions(
   } else if (type === 'logic') {
     const logic = displayCriteria.logic
     if (operator === 'and') {
-      return logic.every((criteria) => shouldRenderResultWithConditions(criteria, answers))
+      return logic.every((criteria) =>
+        shouldRenderResultWithConditions(criteria, choiceMap, answers)
+      )
     } else if (operator === 'or') {
-      return logic.some((criteria) => shouldRenderResultWithConditions(criteria, answers))
+      return logic.some((criteria) =>
+        shouldRenderResultWithConditions(criteria, choiceMap, answers)
+      )
     } else if (operator === 'not') {
-      return logic.every((criteria) => !shouldRenderResultWithConditions(criteria, answers))
+      return logic.every(
+        (criteria) => !shouldRenderResultWithConditions(criteria, choiceMap, answers)
+      )
     }
   }
   return false
@@ -39,13 +48,14 @@ export function shouldRenderResultWithConditions(
 
 export function getResultsFromResultCalculatorNode(
   node: TreeResultCalculatorNode,
+  choiceMap: TranslatedChoiceMap,
   answers?: Array<string>
 ): Array<CoreCommon> {
   const { resultGroups, fallbackResult } = node
   const result =
     resultGroups?.reduce((acc, resultGroup) => {
       const resultInGroupToRender = resultGroup.find((resultGroup) => {
-        return shouldRenderResultWithConditions(resultGroup.displayCriteria, answers)
+        return shouldRenderResultWithConditions(resultGroup.displayCriteria, choiceMap, answers)
       })
       if (resultInGroupToRender) {
         const { title, intro, text } = resultInGroupToRender
@@ -58,4 +68,18 @@ export function getResultsFromResultCalculatorNode(
     return [fallbackResult]
   }
   return result
+}
+
+export function getChoicesFromGroups(choices: string[], choiceMap: TranslatedChoiceMap): string[] {
+  if (!choices) {
+    return []
+  }
+  return flatten(
+    choices?.map((choice) => {
+      if (choiceMap[choice].type === 'choice-group') {
+        return choiceMap[choice].choices
+      }
+      return choice
+    })
+  ) as string[]
 }

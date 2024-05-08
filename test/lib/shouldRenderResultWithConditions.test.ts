@@ -3,13 +3,21 @@ import {
   shouldRenderResultWithConditions,
 } from '../../src/main/resources/lib/result-calculator'
 import { describe, expect, it } from '@jest/globals'
-import { TreeChoiceOrLogic, TreeResultCalculatorNode } from '/lib/types'
+import { TranslatedChoiceMap, TreeChoiceOrLogic, TreeResultCalculatorNode } from '/lib/types'
 import Log from '@enonic/mock-xp/dist/Log'
 
 // @ts-ignore TS2339: Property 'log' does not exist on type 'typeof globalThis'.
 global.log = Log.createLogger({
   loglevel: 'warn',
 })
+
+const choices: TranslatedChoiceMap = {
+  choice1: { type: 'choice', text: 'Choice 1' },
+  choice2: { type: 'choice', text: 'Choice 2' },
+  choice3: { type: 'choice', text: 'Choice 3' },
+  choice4: { type: 'choice', text: 'Choice 4' },
+  choiceGroup: { type: 'choice-group', text: 'Choice 5', choices: ['choice5'] },
+}
 
 describe('shouldRenderResultWithConditions', () => {
   it('should return true when operator is "and" and all choices are in answers', () => {
@@ -19,7 +27,17 @@ describe('shouldRenderResultWithConditions', () => {
       choices: ['choice1', 'choice2'],
     }
     const answers = ['choice1', 'choice2']
-    expect(shouldRenderResultWithConditions(displayCriteria, answers)).toBe(true)
+    expect(shouldRenderResultWithConditions(displayCriteria, choices, answers)).toBe(true)
+  })
+
+  it('should return true when operator is "and" and all choices are in answers', () => {
+    const displayCriteria: TreeChoiceOrLogic = {
+      type: 'choice',
+      operator: 'and',
+      choices: ['choice1', 'choiceGroup'],
+    }
+    const answers = ['choice1', 'choice5']
+    expect(shouldRenderResultWithConditions(displayCriteria, choices, answers)).toBe(true)
   })
 
   it('should return false when operator is "and" and not all choices are in answers', () => {
@@ -29,7 +47,7 @@ describe('shouldRenderResultWithConditions', () => {
       choices: ['choice1', 'choice2'],
     }
     const answers = ['choice1']
-    expect(shouldRenderResultWithConditions(displayCriteria, answers)).toBe(false)
+    expect(shouldRenderResultWithConditions(displayCriteria, choices, answers)).toBe(false)
   })
 
   it('should return true when operator is "or" and at least one choice is in answers', () => {
@@ -39,7 +57,7 @@ describe('shouldRenderResultWithConditions', () => {
       choices: ['choice1', 'choice2'],
     }
     const answers = ['choice1']
-    expect(shouldRenderResultWithConditions(displayCriteria, answers)).toBe(true)
+    expect(shouldRenderResultWithConditions(displayCriteria, choices, answers)).toBe(true)
   })
 
   it('should return false when operator is "or" and no choices are in answers', () => {
@@ -49,7 +67,7 @@ describe('shouldRenderResultWithConditions', () => {
       choices: ['choice1', 'choice2'],
     }
     const answers = ['choice3']
-    expect(shouldRenderResultWithConditions(displayCriteria, answers)).toBe(false)
+    expect(shouldRenderResultWithConditions(displayCriteria, choices, answers)).toBe(false)
   })
 
   it('should return true when operator is "not" and no choices are in answers', () => {
@@ -59,7 +77,7 @@ describe('shouldRenderResultWithConditions', () => {
       choices: ['choice1', 'choice2'],
     }
     const answers = ['choice3']
-    expect(shouldRenderResultWithConditions(displayCriteria, answers)).toBe(true)
+    expect(shouldRenderResultWithConditions(displayCriteria, choices, answers)).toBe(true)
   })
 
   it('should return false when operator is "not" and at least one choice is in answers', () => {
@@ -69,7 +87,7 @@ describe('shouldRenderResultWithConditions', () => {
       choices: ['choice1', 'choice2'],
     }
     const answers = ['choice1']
-    expect(shouldRenderResultWithConditions(displayCriteria, answers)).toBe(false)
+    expect(shouldRenderResultWithConditions(displayCriteria, choices, answers)).toBe(false)
   })
 
   it('should return true when type is "logic", operator is "and", and all nested criteria return true', () => {
@@ -90,7 +108,7 @@ describe('shouldRenderResultWithConditions', () => {
       ],
     }
     const answers = ['choice1', 'choice2', 'choice3']
-    expect(shouldRenderResultWithConditions(displayCriteria, answers)).toBe(true)
+    expect(shouldRenderResultWithConditions(displayCriteria, choices, answers)).toBe(true)
   })
 
   it('should return false when type is "logic", operator is "and", and at least one nested criteria returns false', () => {
@@ -111,7 +129,7 @@ describe('shouldRenderResultWithConditions', () => {
       ],
     }
     const answers = ['choice1', 'choice5']
-    expect(shouldRenderResultWithConditions(displayCriteria, answers)).toBe(false)
+    expect(shouldRenderResultWithConditions(displayCriteria, choices, answers)).toBe(false)
   })
 
   it('should return true when type is "logic", operator is "or", and at least one nested criteria returns true', () => {
@@ -132,7 +150,7 @@ describe('shouldRenderResultWithConditions', () => {
       ],
     }
     const answers = ['choice3', 'choice5']
-    expect(shouldRenderResultWithConditions(displayCriteria, answers)).toBe(true)
+    expect(shouldRenderResultWithConditions(displayCriteria, choices, answers)).toBe(true)
   })
 
   it('should return false when type is "logic", operator is "or", and all nested criteria return false', () => {
@@ -153,7 +171,7 @@ describe('shouldRenderResultWithConditions', () => {
       ],
     }
     const answers = ['choice5', 'choice6']
-    expect(shouldRenderResultWithConditions(displayCriteria, answers)).toBe(false)
+    expect(shouldRenderResultWithConditions(displayCriteria, choices, answers)).toBe(false)
   })
 })
 
@@ -165,7 +183,7 @@ describe('getResultsFromResultCalculatorNode', () => {
       fallbackResult: null,
     }
 
-    const results = getResultsFromResultCalculatorNode(node)
+    const results = getResultsFromResultCalculatorNode(node, choices)
     expect(results).toEqual([])
   })
 
@@ -180,7 +198,7 @@ describe('getResultsFromResultCalculatorNode', () => {
       },
     }
 
-    const results = getResultsFromResultCalculatorNode(node)
+    const results = getResultsFromResultCalculatorNode(node, choices)
     expect(results).toEqual([
       {
         title: 'Fallback Title',
@@ -235,7 +253,7 @@ describe('getResultsFromResultCalculatorNode', () => {
     }
 
     const answers = ['choice1', 'choice2']
-    const results = getResultsFromResultCalculatorNode(node, answers)
+    const results = getResultsFromResultCalculatorNode(node, choices, answers)
     expect(results).toEqual([
       {
         title: 'Test Title 1',
@@ -290,7 +308,7 @@ describe('getResultsFromResultCalculatorNode', () => {
     }
 
     const answers = ['choice4']
-    const results = getResultsFromResultCalculatorNode(node, answers)
+    const results = getResultsFromResultCalculatorNode(node, choices, answers)
     expect(results).toEqual([])
   })
 
@@ -339,7 +357,7 @@ describe('getResultsFromResultCalculatorNode', () => {
     }
 
     const answers = ['choice1']
-    const results = getResultsFromResultCalculatorNode(node, answers)
+    const results = getResultsFromResultCalculatorNode(node, choices, answers)
     expect(results).toEqual([
       {
         title: 'Test Title 2',
