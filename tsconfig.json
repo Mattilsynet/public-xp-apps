@@ -6,7 +6,7 @@
 		"allowUmdGlobalAccess": true,
 		"baseUrl": "./",
 		"moduleResolution": "node",
-
+    "allowJs": true,
 		"paths": {
 			// Development (should be commented out when commiting)
 			// "@enonic-types/core": ["../xp/modules/lib/core/index.d.ts"],

@@ -77,6 +77,7 @@ node {
 }
 
 tasks.register('updateNodePackageVersion', Task) {
+  dependsOn npmBuild
   def version = project.findProperty('version')
   def packageJsonFile = file('package/package.json')
   def packageJson = new groovy.json.JsonSlurper().parseText(packageJsonFile.text)
@@ -167,10 +168,8 @@ tasks.register('npmPackageBuild', NpmTask) {
 	]
 }
 
-npmInstall.dependsOn npmPackageBuild
-
 jar.dependsOn generateTypeScript
-jar.dependsOn npmBuild
+jar.dependsOn npmPackageBuild
 
 processResources {
 	exclude '**/.gitkeep'

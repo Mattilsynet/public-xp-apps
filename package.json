@@ -73,13 +73,6 @@
     "ts-jest": "^29.1.2",
     "tsup": "^8"
   },
-  "exports": {
-    ".": {
-      "types": "./build/resources/main/index.d.ts",
-      "require": "./build/resources/main/index.js",
-      "import": "./build/resources/main/index.js"
-    }
-  },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "^4.17.2"
   }
