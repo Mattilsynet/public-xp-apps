@@ -56,7 +56,7 @@ export type BranchCheckbox = {
   /**
    * Foretrukne valg
    */
-  preferredChoices?: string;
+  preferredChoices?: Array<string> | string;
 
   /**
    * Neste spørsmål eller resultat
