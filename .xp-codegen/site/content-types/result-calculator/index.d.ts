@@ -14,4 +14,9 @@ export type ResultCalculator = {
    * Resultat som vises hvis ingen av resultatene i gruppene overfor vises
    */
   fallbackResult?: string;
+
+  /**
+   * Tittel for oppsummering
+   */
+  summaryPageTitle: string;
 }

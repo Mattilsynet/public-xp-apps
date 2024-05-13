@@ -5,12 +5,25 @@ import { Wizard } from '/codegen/site/content-types'
 import { resolveEdges } from '/guillotine/resolvers/edges'
 import { resolveNodes } from '/guillotine/resolvers/nodes'
 import { getChoiceMaps } from '/guillotine/resolvers/choices'
+import { validateWizardData } from '/lib/wizard-validator'
+import { mapQueryToValues } from '/lib/wizard-util'
 
 export function extensions(graphQL: GraphQL): GuillotineExtensions {
   const { GraphQLString, GraphQLBoolean, Json, reference, list } = graphQL
 
   return {
     types: {
+      UIError: {
+        description: 'Error object for UI',
+        fields: {
+          key: {
+            type: GraphQLString,
+          },
+          message: {
+            type: GraphQLString,
+          },
+        },
+      },
       Wizard_Root: {
         description: 'Inneholder alle spørsmål, grener og valg (nodes and edges)',
         fields: {
@@ -31,6 +44,9 @@ export function extensions(graphQL: GraphQL): GuillotineExtensions {
           },
           errors: {
             type: list(GraphQLString),
+          },
+          validationErrors: {
+            type: list(reference('UIError')),
           },
         },
       },
@@ -54,6 +70,7 @@ export function extensions(graphQL: GraphQL): GuillotineExtensions {
             choices: choiceMaps.translatedChoices,
             errors,
             validTree: errors.length === 0,
+            validationErrors: validateWizardData(nodes, mapQueryToValues(env.args.wizardChoices)),
           }
         },
       },
@@ -63,6 +80,9 @@ export function extensions(graphQL: GraphQL): GuillotineExtensions {
         params.addFields({
           root: {
             type: reference('Wizard_Root'),
+            args: {
+              wizardChoices: GraphQLString,
+            },
           },
         })
       },

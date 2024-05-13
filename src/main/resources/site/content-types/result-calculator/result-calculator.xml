@@ -36,5 +36,15 @@
         <allowPath>./*</allowPath>
       </config>
     </input>
+    <field-set>
+      <label i18n="resultCalculator.label">Oppsummering</label>
+      <items>
+        <input name="summaryPageTitle" type="TextLine">
+          <label i18n="resultCalculator.summaryPageTitle">Tittel for oppsummering</label>
+          <default>Oppsummering</default>
+          <occurrences minimum="1" maximum="1" />
+        </input>
+      </items>
+    </field-set>
   </form>
 </content-type>
