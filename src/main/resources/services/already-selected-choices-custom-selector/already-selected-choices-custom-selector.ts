@@ -4,7 +4,7 @@ import { flatten, forceArray } from '@enonic/js-utils'
 import { Content } from '@enonic-types/lib-content'
 import { BranchNumber, BranchRadio } from '/codegen/site/content-types'
 import { assetUrl } from '/lib/xp/portal'
-import { isChoice, isChoiceGroup, wizardType } from '/guillotine/resolvers/type-check'
+import { isChoiceContent, isChoiceGroupContent, wizardType } from '/lib/type-check'
 
 export function get(request: Request) {
   const key = request.path.match(/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/)?.[0]
@@ -48,14 +48,14 @@ export function get(request: Request) {
     }).hits
 
     const mappedRes = res.map((hit, i) => {
-      if (isChoiceGroup(hit)) {
+      if (isChoiceGroupContent(hit)) {
         return {
           id: hit._id,
           iconUrl: iconUrlChoiceGroup,
           displayName: hit.displayName,
           description: hit._path,
         }
-      } else if (isChoice(hit)) {
+      } else if (isChoiceContent(hit)) {
         return {
           id: hit._id,
           iconUrl: iconUrlChoice,
@@ -106,7 +106,7 @@ function getAllChoiceIdsFromChoicesAndGroups(
         },
       },
     }).hits.map((hit) => {
-      if (isChoiceGroup(hit)) {
+      if (isChoiceGroupContent(hit)) {
         return query({
           count: -1,
           filters: {

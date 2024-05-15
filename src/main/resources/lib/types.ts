@@ -2,14 +2,14 @@ import { BranchNumber, Question, Result } from '/codegen/site/content-types'
 import { LogicalOperator } from '/codegen/site/mixins/logical-operator'
 import { CoreCommon } from '/codegen/site/mixins/core-common'
 
-export type TranslatedChoiceMap = Record<
-  string,
-  {
-    type: 'choice' | 'choice-group'
-    text?: string
-    choices?: Array<string>
-  }
->
+export type TranslatedChoice = {
+  id: string
+  type: 'choice' | 'choice-group'
+  text?: string
+  choices?: Array<string>
+  partOfGroups?: Array<string>
+}
+export type TranslatedChoiceMap = Record<string, TranslatedChoice>
 export type UUIDChoiceMap = Record<
   string,
   {
@@ -49,6 +49,7 @@ export type TreeResultWithConditions = {
 
 export type TreeResultGroups = Array<Array<TreeResultWithConditions>>
 export type TreeResultCalculatorNode = {
+  id: string
   type: string
   resultGroups: TreeResultGroups
   fallbackResult?: CoreCommon
@@ -67,7 +68,7 @@ export type TreeQuestionNode = {
     isNumber?: string
   }
 }
-export type TreeResultNode = { type: string } & Result
+export type TreeResultNode = { type: string; id: string } & Result
 export type TreeNode = TreeQuestionNode | TreeResultNode | TreeResultCalculatorNode
 export type TreeNodes = Record<string, TreeNode>
 
@@ -97,3 +98,54 @@ export type TreeEdge = {
   conditionals?: TreeEdgeNumberConditionals
 }
 export type TreeEdges = Record<string, TreeEdge>
+
+export type TraversedGraph = {
+  renderSteps: Array<WizardRenderNode>
+  resultCalculatorNode: WizardRenderNode
+}
+export type WizardRoot = {
+  rootNode: string
+  nodes: TreeNodes
+  edges: TreeEdges
+  choices: TranslatedChoiceMap
+  errors: Array<string>
+  validTree: boolean
+  validationErrors?: Array<UIError>
+  traversedGraph?: TraversedGraph
+}
+
+export type WizardStep = {
+  node: TreeNode
+  edges: Array<TreeEdge>
+  choices: Array<TranslatedChoice>
+  preferredChoices?: Array<TranslatedChoice>
+}
+
+type WizardErrorMessages = { required?: string; greaterThanZero?: string; isNumber?: string }
+export type MultiSelectOption = {
+  value: string
+  text: string
+  removeAriaLabel: string
+}
+export type RadioOptions = {
+  value: string
+  text: string
+}
+export type WizardNumberOptions = { name: string; value: string; label: string }
+export type WizardRenderNode = {
+  id: string
+  // todo split to different types
+  type?: string
+  results?: Array<CoreCommon>
+
+  choiceType?: 'radio' | 'number' | 'checkbox'
+  errorMessages?: WizardErrorMessages
+  options?: Array<RadioOptions | MultiSelectOption | WizardNumberOptions>
+  question?: string
+  preferredChoices?: Array<MultiSelectOption>
+} & Partial<CoreCommon>
+
+export type UIError = {
+  key: string
+  message: string
+}

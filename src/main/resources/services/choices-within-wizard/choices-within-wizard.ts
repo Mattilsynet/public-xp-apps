@@ -2,7 +2,7 @@ import { get as getContent, query } from '/lib/xp/content'
 import { Request } from '/types'
 import { Content } from '@enonic-types/lib-content'
 import { BranchNumber } from '/codegen/site/content-types'
-import { wizardType } from '/guillotine/resolvers/type-check'
+import { wizardType } from '/lib/type-check'
 import { assetUrl } from '/lib/xp/portal'
 
 export function get(request: Request) {

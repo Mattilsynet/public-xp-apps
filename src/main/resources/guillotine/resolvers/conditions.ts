@@ -1,5 +1,5 @@
 import { Content } from '/lib/xp/content'
-import { isNumberEdge } from '/guillotine/resolvers/type-check'
+import { isNumberEdgeContent } from '/lib/type-check'
 import { forceArray } from '@enonic/js-utils'
 import { translateChoices } from '/guillotine/resolvers/choices'
 import { ChoiceMaps, SpecificNumberCondition, TreeEdgeNumberConditionals } from '/lib/types'
@@ -8,7 +8,7 @@ export function resolveEdgeWithNumberInputCondition(
   edge: Content<unknown>,
   choiceMaps: ChoiceMaps
 ): TreeEdgeNumberConditionals | undefined {
-  if (!isNumberEdge(edge)) {
+  if (!isNumberEdgeContent(edge)) {
     return undefined
   }
 

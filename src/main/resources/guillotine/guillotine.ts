@@ -5,8 +5,10 @@ import { Wizard } from '/codegen/site/content-types'
 import { resolveEdges } from '/guillotine/resolvers/edges'
 import { resolveNodes } from '/guillotine/resolvers/nodes'
 import { getChoiceMaps } from '/guillotine/resolvers/choices'
-import { validateWizardData } from '/lib/wizard-validator'
 import { mapQueryToValues } from '/lib/wizard-util'
+import { WizardRoot } from '/lib/types'
+import { traverseGraph } from '/lib/traverse'
+import { validateWizardData } from '/lib/validate'
 
 export function extensions(graphQL: GraphQL): GuillotineExtensions {
   const { GraphQLString, GraphQLBoolean, Json, reference, list } = graphQL
@@ -48,12 +50,15 @@ export function extensions(graphQL: GraphQL): GuillotineExtensions {
           validationErrors: {
             type: list(reference('UIError')),
           },
+          traversedGraph: {
+            type: Json,
+          },
         },
       },
     },
     resolvers: {
       no_mattilsynet_wizard_Wizard_Data: {
-        root: (env: GraphQLResolverEnvironment<Wizard & { __contentId?: string }>) => {
+        root: (env: GraphQLResolverEnvironment<Wizard & { __contentId?: string }>): WizardRoot => {
           const wizardPath = get({ key: env.source?.__contentId ?? '/nowhere' })?._path
           if (!wizardPath) {
             return undefined
@@ -63,15 +68,20 @@ export function extensions(graphQL: GraphQL): GuillotineExtensions {
           const nodes = resolveNodes(wizardPath, choiceMaps, errors)
           const edges = resolveEdges(wizardPath, nodes, choiceMaps, errors)
 
-          return {
+          const root = {
             rootNode: env.source.question,
             nodes,
             edges,
             choices: choiceMaps.translatedChoices,
             errors,
             validTree: errors.length === 0,
-            validationErrors: validateWizardData(nodes, mapQueryToValues(env.args.wizardChoices)),
           }
+          const traversedGraph = traverseGraph(env.args.wizardChoices, root)
+          const validationErrors = validateWizardData(
+            traversedGraph.renderSteps,
+            mapQueryToValues(env.args.wizardChoices)
+          )
+          return { ...root, validationErrors, traversedGraph }
         },
       },
     },

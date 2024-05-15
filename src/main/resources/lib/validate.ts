@@ -1,26 +1,16 @@
-import {
-  isMultiSelect,
-  isNumbers,
-  isRadioButton,
-  calculateChoiceTotal,
-  type Wizard2QueryParamObject,
-} from './wizard-util'
-import { TreeNode, TreeNodes, TreeQuestionNode } from '/lib/types'
-
-export interface UIError {
-  key: string
-  message: string
-}
+import { UIError, WizardRenderNode } from './types'
+import { isMultiSelect, isNumbers, isRadioButton, WizardQueryParamObject } from './wizard-util'
+import { calculateChoiceTotal } from './traverse'
 
 export function validateWizardData(
-  nodes: TreeNodes,
-  data: Array<Wizard2QueryParamObject>
+  steps: Array<WizardRenderNode>,
+  data: Array<WizardQueryParamObject>
 ): Array<UIError> {
   return data.reduce((acc, curr) => {
     if (acc.find((a) => a.key === curr.id)) {
       return acc
     }
-    const node = nodes[curr.id]
+    const node = steps.find((s) => s.id === curr.id)
     const error = validateNode(node, curr, data)
     if (error) {
       return acc.concat(error)
@@ -30,9 +20,9 @@ export function validateWizardData(
 }
 
 function validateNode(
-  node: TreeNode,
-  currentChoice: Wizard2QueryParamObject,
-  data: Array<Wizard2QueryParamObject>
+  node: WizardRenderNode,
+  currentChoice: WizardQueryParamObject,
+  data: Array<WizardQueryParamObject>
 ): undefined | UIError {
   if (isNumbers(node)) {
     return validateNumbers(node, currentChoice, data)
@@ -45,8 +35,8 @@ function validateNode(
   }
 }
 function validateRadio(
-  node: TreeQuestionNode,
-  choice: Wizard2QueryParamObject
+  node: WizardRenderNode,
+  choice: WizardQueryParamObject
 ): undefined | UIError {
   if (choice.choice.length === 0) {
     return { message: node.errorMessages.required, key: choice.id }
@@ -55,9 +45,9 @@ function validateRadio(
 }
 
 function validateNumbers(
-  node: TreeQuestionNode,
-  currentChoice: Wizard2QueryParamObject,
-  data: Array<Wizard2QueryParamObject>
+  node: WizardRenderNode,
+  currentChoice: WizardQueryParamObject,
+  data: Array<WizardQueryParamObject>
 ): undefined | UIError {
   const total = calculateChoiceTotal(currentChoice.id, data)
   if (total === 0) {
@@ -76,8 +66,8 @@ function validateNumbers(
 }
 
 function validateMultiselect(
-  node: TreeQuestionNode,
-  choice: Wizard2QueryParamObject
+  node: WizardRenderNode,
+  choice: WizardQueryParamObject
 ): undefined | UIError {
   if (choice.choice.length === 0) {
     return { message: node.errorMessages.required, key: choice.id }

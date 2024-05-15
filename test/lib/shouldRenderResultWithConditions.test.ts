@@ -12,11 +12,11 @@ global.log = Log.createLogger({
 })
 
 const choices: TranslatedChoiceMap = {
-  choice1: { type: 'choice', text: 'Choice 1' },
-  choice2: { type: 'choice', text: 'Choice 2' },
-  choice3: { type: 'choice', text: 'Choice 3' },
-  choice4: { type: 'choice', text: 'Choice 4' },
-  choiceGroup: { type: 'choice-group', text: 'Choice 5', choices: ['choice5'] },
+  choice1: { type: 'choice', text: 'Choice 1', id: '123' },
+  choice2: { type: 'choice', text: 'Choice 2', id: '123' },
+  choice3: { type: 'choice', text: 'Choice 3', id: '123' },
+  choice4: { type: 'choice', text: 'Choice 4', id: '123' },
+  choiceGroup: { type: 'choice-group', text: 'Choice 5', choices: ['choice5'], id: '123' },
 }
 
 describe('shouldRenderResultWithConditions', () => {
@@ -178,6 +178,7 @@ describe('shouldRenderResultWithConditions', () => {
 describe('getResultsFromResultCalculatorNode', () => {
   it('should return an empty array if no resultGroups are provided', () => {
     const node: TreeResultCalculatorNode = {
+      id: '123',
       type: 'logic',
       resultGroups: null,
       fallbackResult: null,
@@ -189,6 +190,7 @@ describe('getResultsFromResultCalculatorNode', () => {
 
   it('should return the fallback result when no other display criteria is met', () => {
     const node: TreeResultCalculatorNode = {
+      id: '123',
       type: 'logic',
       resultGroups: null,
       fallbackResult: {
@@ -210,6 +212,7 @@ describe('getResultsFromResultCalculatorNode', () => {
 
   it('should return an array of results that meet the display criteria', () => {
     const node: TreeResultCalculatorNode = {
+      id: '123',
       type: 'no.mattilsynet.wizard:result-calculator',
       resultGroups: [
         [
@@ -265,6 +268,7 @@ describe('getResultsFromResultCalculatorNode', () => {
 
   it('should return an empty array if no results meet the display criteria', () => {
     const node: TreeResultCalculatorNode = {
+      id: '123',
       type: 'no.mattilsynet.wizard:result-calculator',
       resultGroups: [
         [
@@ -314,6 +318,7 @@ describe('getResultsFromResultCalculatorNode', () => {
 
   it('should return a result when the not condition is fulfilled', () => {
     const node: TreeResultCalculatorNode = {
+      id: '123',
       type: 'no.mattilsynet.wizard:result-calculator',
       resultGroups: [
         [

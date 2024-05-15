@@ -1,11 +1,11 @@
 import { query } from '/lib/xp/content'
 import {
-  isQuestionNode,
-  isResult,
-  isResultCalculatorNode,
-  isResultWithConditions,
+  isQuestionNodeContent,
+  isResultCalculatorNodeContent,
+  isResultNodeContent,
+  isResultWithConditionsContent,
   wizardType,
-} from '/guillotine/resolvers/type-check'
+} from '/lib/type-check'
 import { forceArray } from '@enonic/js-utils'
 import { ChoiceMaps, TreeNode, TreeNodes, TreeResultWithConditions } from '/lib/types'
 import { translateChoices } from '/guillotine/resolvers/choices'
@@ -18,6 +18,7 @@ import {
   ResultWithConditions,
 } from '/codegen/site/content-types'
 import { processHtml } from '/lib/xp/portal'
+import { CoreCommon } from '/codegen/site/mixins/core-common'
 
 type WizardNodes = Content<Question | Result | ResultCalculator | ResultWithConditions>
 
@@ -63,12 +64,14 @@ function getResultCalculatorNodes(
   const resultWithConditions: Record<string, TreeResultWithConditions> = {}
 
   return nodes.reduce((acc: TreeNodes, node) => {
-    let mapped: Omit<TreeNode, 'type'>
-    if (isResultCalculatorNode(node)) {
+    let mapped: Partial<TreeNode>
+    if (isResultCalculatorNodeContent(node)) {
       const fallbackResultUUID = node.data.fallbackResult
       mapped = {
         ...node.data,
-        fallbackResult: fallbackResultUUID ? questionAndResultNodes[fallbackResultUUID] : undefined,
+        fallbackResult: fallbackResultUUID
+          ? (questionAndResultNodes[fallbackResultUUID] as CoreCommon)
+          : undefined,
         resultGroups: forceArray(node.data.resultGroups ?? []).map((resultGroup) => {
           return forceArray(resultGroup.result ?? []).map<TreeResultWithConditions>((result) => {
             const resultsWithCondition = resultWithConditions[result]
@@ -81,7 +84,7 @@ function getResultCalculatorNodes(
           })
         }),
       }
-    } else if (isResultWithConditions(node)) {
+    } else if (isResultWithConditionsContent(node)) {
       resultWithConditions[node._id] = {
         ...node.data,
         text: processHtml({ value: node.data.text }),
@@ -121,7 +124,7 @@ function getResultCalculatorNodes(
         },
       }
       return acc
-    } else if (!isQuestionNode(node) && node.type !== wizardType('result')) {
+    } else if (!isQuestionNodeContent(node) && node.type !== wizardType('result')) {
       errors.push(`Unknown node type: ${node.type}`)
       return acc
     } else {
@@ -144,8 +147,8 @@ function getQuestionAndResultNodes(
   errors: Array<string>
 ): Record<string, TreeNode> {
   return nodes.reduce((acc, node) => {
-    let mapped: Omit<TreeNode, 'type'>
-    if (isQuestionNode(node)) {
+    let mapped: Partial<TreeNode>
+    if (isQuestionNodeContent(node)) {
       const choiceType = node.data.choiceType?._selected
       const choiceTypeData = node.data.choiceType?.[choiceType]
       mapped = {
@@ -154,12 +157,12 @@ function getQuestionAndResultNodes(
         targets: forceArray(choiceTypeData?.nextStep ?? []),
         errorMessages: choiceTypeData.errorMessages,
       }
-    } else if (isResult(node)) {
+    } else if (isResultNodeContent(node)) {
       mapped = {
         ...node.data,
         text: processHtml({ value: node.data.text }),
       }
-    } else if (!isResultCalculatorNode(node) && !isResultWithConditions(node)) {
+    } else if (!isResultCalculatorNodeContent(node) && !isResultWithConditionsContent(node)) {
       errors.push(`Unknown node type: ${node.type}`)
       return acc
     } else {

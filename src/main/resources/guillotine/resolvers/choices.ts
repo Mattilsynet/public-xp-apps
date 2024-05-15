@@ -1,5 +1,5 @@
 import { query } from '/lib/xp/content'
-import { wizardType } from '/guillotine/resolvers/type-check'
+import { wizardType } from '/lib/type-check'
 import { Content } from '@enonic-types/lib-content'
 import { forceArray } from '@enonic/js-utils'
 import { stringToKey } from '/lib/string-to-key'
@@ -70,36 +70,37 @@ export function getChoiceMaps(): ChoiceMaps {
  */
 export function translateChoices(
   choices: Array<string> | string,
-  _selected: 'direct' | 'reference' | 'referenceOutside' | undefined,
+  selected: 'direct' | 'reference' | 'referenceOutside' | undefined,
   choiceMaps: ChoiceMaps
 ) {
   const { choiceMap, choiceGroupMap, translatedChoices } = choiceMaps
   if (!choices) {
     return []
-  } else if (_selected === 'reference' || _selected === 'referenceOutside') {
+  } else if (selected === 'reference' || selected === 'referenceOutside') {
     return forceArray(choices).map((choiceKeyUUID) => {
       const choiceValue = choiceMap[choiceKeyUUID] ?? choiceGroupMap[choiceKeyUUID]
       const choiceKey = stringToKey(choiceValue.text)
 
       if (choiceValue.type === wizardType('choice')) {
-        translatedChoices[choiceKey] = { ...choiceValue, type: 'choice' }
+        translatedChoices[choiceKey] = { ...choiceValue, type: 'choice', id: choiceKeyUUID }
       } else if (choiceValue.type === wizardType('choice-group')) {
         choiceValue.type = 'choice-group'
         translatedChoices[choiceKey] = {
+          id: choiceKeyUUID,
           type: 'choice-group',
           text: choiceValue.text,
           choices: choiceValue.choices?.map((choiceUUID) =>
             stringToKey(choiceMap[choiceUUID]?.text)
           ),
         }
-        translateChoices(choiceValue.choices, _selected, choiceMaps)
+        translateChoices(choiceValue.choices, selected, choiceMaps)
       }
       return choiceKey
     })
-  } else if (_selected === 'direct') {
+  } else if (selected === 'direct') {
     return forceArray(choices).map((choice) => {
       const choiceIndex = stringToKey(choice)
-      translatedChoices[choiceIndex] = { type: 'choice', text: choice }
+      translatedChoices[choiceIndex] = { type: 'choice', text: choice, id: choiceIndex }
       return choiceIndex
     })
   } else {

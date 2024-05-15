@@ -1,5 +1,5 @@
 import { query } from '/lib/xp/content'
-import { isCheckboxEdge, isTreeQuestionNode, wizardType } from '/guillotine/resolvers/type-check'
+import { isCheckboxEdgeContent, isQuestion, wizardType } from '/lib/type-check'
 import { resolveEdgeWithNumberInputCondition } from '/guillotine/resolvers/conditions'
 import { BranchCheckbox, BranchNumber, BranchRadio } from '/codegen/site/content-types'
 import { Content } from '@enonic-types/lib-content'
@@ -41,7 +41,7 @@ export function resolveEdges(
     )
 
     let preferredChoices: undefined | string[]
-    if (isCheckboxEdge(edge)) {
+    if (isCheckboxEdgeContent(edge)) {
       preferredChoices = translateChoices(edge.data.preferredChoices, directOrRef, choiceMaps)
       choices = choices.filter(
         (choice) => !preferredChoices.find((preferred) => choice === preferred)
@@ -77,7 +77,7 @@ function createEdgeToNodeSourceMap(
   const edgeToNodeMap = {}
   for (const key in nodes) {
     const node = nodes[key]
-    if (!isTreeQuestionNode(node)) {
+    if (!isQuestion(node)) {
       continue
     }
     node.targets?.forEach((target) => {
