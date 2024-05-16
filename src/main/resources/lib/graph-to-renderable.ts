@@ -57,6 +57,7 @@ export function mapNodeToRenderable(
       title: step.node.title,
       intro: step.node.intro,
       text: step.node.text,
+      conditionResults: step.node.conditionResults,
     }
   } else if (isResultCalculator(step.node)) {
     const answers = flatten(

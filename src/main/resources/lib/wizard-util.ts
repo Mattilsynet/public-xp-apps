@@ -23,8 +23,8 @@ export function mapQueryToValues(query: string): Array<WizardQueryParamObject> {
   })
 }
 
-function splitQueryParamString(query: string): Array<string> {
-  if (!query?.length) {
+function splitQueryParamString(query?: string): Array<string> {
+  if (!query || !query.length) {
     return []
   }
   const removed = query.replace('?', '')

@@ -15,6 +15,10 @@ export const gqlQueryResponse = {
                 type: 'choice',
                 text: 'Hund',
               },
+              gnager: {
+                type: 'choice',
+                text: 'Gnager',
+              },
               katt: {
                 type: 'choice',
                 text: 'Katt',
@@ -69,9 +73,35 @@ export const gqlQueryResponse = {
                 conditionals: {
                   totalNumberCondition: {
                     operator: 'gt',
-                    value: 5,
+                    value: 10,
                     target: 'af031da2-759d-4bf5-8c70-db9921813464',
                   },
+                  specificNumberConditions: [
+                    {
+                      operator: 'gt',
+                      value: 2,
+                      choices: ['hund'],
+                      target: '8b756076-4c34-447b-bf28-86897855209a',
+                    },
+                    {
+                      operator: 'gt',
+                      value: 2,
+                      choices: ['katt'],
+                      target: '8b756076-4c34-447b-bf28-868978552091',
+                    },
+                    {
+                      operator: 'gt',
+                      value: 3,
+                      choices: ['ilder'],
+                      target: 'ce863204-5517-4886-8845-7ee9eab904ad',
+                    },
+                    {
+                      operator: 'gt',
+                      value: 3,
+                      choices: ['gnager'],
+                      target: 'ce863204-5517-4886-8845-7ee9eab904ad',
+                    },
+                  ],
                 },
               },
               'aaee230e-ace3-459f-9267-30093e46fcb7': {
@@ -94,6 +124,21 @@ export const gqlQueryResponse = {
                 id: 'cf598bcd-8a7b-4431-b6a3-d69338279e87',
                 type: 'no.mattilsynet.wizard:result-calculator',
                 resultGroups: [],
+              },
+              '8b756076-4c34-447b-bf28-86897855209a': {
+                id: '49cee92f-d1f0-4ae7-8683-a4c8b37fb625',
+                type: 'no.mattilsynet.wizard:result',
+                title: 'Du kan ikke ha mer enn 2 hunder!',
+              },
+              '8b756076-4c34-447b-bf28-868978552091': {
+                id: '8b756076-4c34-447b-bf28-868978552091',
+                type: 'no.mattilsynet.wizard:result',
+                title: 'Du kan ikke ha mer enn 2 katter!',
+              },
+              'ce863204-5517-4886-8845-7ee9eab904ad': {
+                id: '49cee92f-d1f0-4ae7-8683-a4c8b37fb625',
+                type: 'no.mattilsynet.wizard:result',
+                title: 'Du kan ikke ha mer enn 3 ildere!',
               },
               '49cee92f-d1f0-4ae7-8683-a4c8b37fb625': {
                 id: '49cee92f-d1f0-4ae7-8683-a4c8b37fb625',

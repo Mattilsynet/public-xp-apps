@@ -33,9 +33,12 @@ export function get(request: Request) {
 
     const ids = getAllChoiceIdsFromChoicesAndGroups(directOrRefChoices, selected)
 
+    const queryString = request.params.query
+      ? `displayName LIKE '*${request.params.query}*'`
+      : undefined
     const res = query({
       count: request.params.count ? Number(request.params.count) : 10,
-      query: `displayName LIKE '*${request.params.query}*'`,
+      query: queryString,
       filters: {
         boolean: {
           must: {

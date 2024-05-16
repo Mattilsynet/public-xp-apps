@@ -68,12 +68,16 @@ export type TreeQuestionNode = {
     isNumber?: string
   }
 }
-export type TreeResultNode = { type: string; id: string } & Result
+export type TreeResultNode = {
+  type: string
+  id: string
+  conditionResults?: Array<Omit<TreeResultNode, 'conditionResults'>>
+} & Result
 export type TreeNode = TreeQuestionNode | TreeResultNode | TreeResultCalculatorNode
 export type TreeNodes = Record<string, TreeNode>
 
 type NumberLogicOperator = BranchNumber['conditionalChoiceTotal']['numberCondition']['_selected']
-type TotalNumberCondition = {
+export type TotalNumberCondition = {
   operator?: NumberLogicOperator
   value?: number
   target?: string
@@ -138,6 +142,7 @@ export type WizardRenderNode = {
   type?: string
   results?: Array<CoreCommon>
 
+  conditionResults?: Array<TreeResultNode>
   choiceType?: 'radio' | 'number' | 'checkbox'
   errorMessages?: WizardErrorMessages
   options?: Array<RadioOptions | MultiSelectOption | WizardNumberOptions>

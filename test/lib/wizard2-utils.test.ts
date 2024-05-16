@@ -63,19 +63,7 @@ describe('Utils', function () {
     expect(res[1].title).toEqual('Du må reise med dyrene selv!')
   })
 
-  it('getRenderSteps tree - totalNumberCondition to many dogs', () => {
-    const root = getData(gqlQueryResponse)
-    const res = getRenderSteps(
-      'd9d69944-4f22-4e40-a457-d77e9f151dfb=ja&776101f2-615c-404b-8d37-acbe8b7ede38_hund=10',
-      root
-    )
-    expect(res.length).toEqual(3)
-    expect(res[0].question).toEqual('Reiser du med dyrene selv?')
-    expect(res[1].question).toEqual('Hvilke hvor mange dyr reiser du med?')
-    expect(res[2].title).toEqual('Kan ikke reise med flere enn 5 dyr!')
-  })
-
-  it('getRenderSteps tree - katt and dog', () => {
+  it('getRenderSteps tree - cat and dog', () => {
     const root = getData(gqlQueryResponse)
     const res = getRenderSteps(
       'd9d69944-4f22-4e40-a457-d77e9f151dfb=ja&776101f2-615c-404b-8d37-acbe8b7ede38_hund=1&776101f2-615c-404b-8d37-acbe8b7ede38_katt=1',
@@ -91,13 +79,69 @@ describe('Utils', function () {
   it('getRenderSteps tree - totalNumberCondition to total', () => {
     const root = getData(gqlQueryResponse)
     const res = getRenderSteps(
-      'd9d69944-4f22-4e40-a457-d77e9f151dfb=ja&776101f2-615c-404b-8d37-acbe8b7ede38_hund=5&776101f2-615c-404b-8d37-acbe8b7ede38_katt=5',
+      'd9d69944-4f22-4e40-a457-d77e9f151dfb=ja&776101f2-615c-404b-8d37-acbe8b7ede38_hund=6&776101f2-615c-404b-8d37-acbe8b7ede38_katt=5',
       root
     )
     expect(res.length).toEqual(3)
     expect(res[0].question).toEqual('Reiser du med dyrene selv?')
     expect(res[1].question).toEqual('Hvilke hvor mange dyr reiser du med?')
     expect(res[2].title).toEqual('Kan ikke reise med flere enn 5 dyr!')
+  })
+
+  it('getRenderSteps tree - specificNumberConditions - single result', () => {
+    const root = getData(gqlQueryResponse)
+    const res = getRenderSteps(
+      'd9d69944-4f22-4e40-a457-d77e9f151dfb=ja&776101f2-615c-404b-8d37-acbe8b7ede38_hund=5',
+      root
+    )
+    expect(res.length).toEqual(3)
+    expect(res[0].question).toEqual('Reiser du med dyrene selv?')
+    expect(res[1].question).toEqual('Hvilke hvor mange dyr reiser du med?')
+    expect(res[2].title).toEqual('Du kan ikke ha mer enn 2 hunder!')
+  })
+
+  it('getRenderSteps tree - specificNumberConditions - multiple condition same result', () => {
+    const root = getData(gqlQueryResponse)
+    const res = getRenderSteps(
+      'd9d69944-4f22-4e40-a457-d77e9f151dfb=ja&776101f2-615c-404b-8d37-acbe8b7ede38_ilder=5&776101f2-615c-404b-8d37-acbe8b7ede38_gnager=5',
+      root
+    )
+    expect(res.length).toEqual(3)
+    expect(res[0].question).toEqual('Reiser du med dyrene selv?')
+    expect(res[1].question).toEqual('Hvilke hvor mange dyr reiser du med?')
+    expect(res[2].conditionResults.length).toEqual(1)
+    expect(res[2].conditionResults[0].title).toEqual('Du kan ikke ha mer enn 3 ildere!')
+  })
+
+  it('getRenderSteps tree - specificNumberConditions - multiple results', () => {
+    const root = getData(gqlQueryResponse)
+    const query = [
+      'd9d69944-4f22-4e40-a457-d77e9f151dfb=ja',
+      '776101f2-615c-404b-8d37-acbe8b7ede38_hund=4',
+      '776101f2-615c-404b-8d37-acbe8b7ede38_katt=4',
+    ].join('&')
+    const res = getRenderSteps(query, root)
+    expect(res.length).toEqual(3)
+    expect(res[0].question).toEqual('Reiser du med dyrene selv?')
+    expect(res[1].question).toEqual('Hvilke hvor mange dyr reiser du med?')
+    expect(res[2].conditionResults.length).toEqual(2)
+    expect(res[2].conditionResults[0].title).toEqual('Du kan ikke ha mer enn 2 hunder!')
+    expect(res[2].conditionResults[1].title).toEqual('Du kan ikke ha mer enn 2 katter!')
+  })
+
+  it('getRenderSteps tree - specificNumberConditions ok', () => {
+    const root = getData(gqlQueryResponse)
+    const query = [
+      'd9d69944-4f22-4e40-a457-d77e9f151dfb=ja',
+      '776101f2-615c-404b-8d37-acbe8b7ede38_hund=1',
+      '776101f2-615c-404b-8d37-acbe8b7ede38_katt=1',
+      '776101f2-615c-404b-8d37-acbe8b7ede38_ilder=1',
+    ].join('&')
+    const res = getRenderSteps(query, root)
+    expect(res.length).toEqual(3)
+    expect(res[0].question).toEqual('Reiser du med dyrene selv?')
+    expect(res[1].question).toEqual('Hvilke hvor mange dyr reiser du med?')
+    expect(res[2].question).toEqual('Hvilke land skal du besøke?')
   })
 })
 

@@ -1,10 +1,14 @@
 import {
+  SpecificNumberCondition,
+  TotalNumberCondition,
   TranslatedChoice,
   TranslatedChoiceMap,
   TraversedGraph,
   TreeEdge,
   TreeEdges,
   TreeNode,
+  TreeNodes,
+  TreeResultNode,
   WizardRenderNode,
   WizardRoot,
 } from './types'
@@ -100,19 +104,62 @@ function getNextWithConditionals(
   const totalNumberCondition = selectedEdge.conditionals.totalNumberCondition
   if (totalNumberCondition) {
     const choicesTotal = calculateChoiceTotal(choice.id, userChoices)
-    const isTotalCondition = compareTotalCondition(totalNumberCondition, choicesTotal)
+    const isTotalCondition = compareTotalOrSpecificCondition(totalNumberCondition, choicesTotal)
 
     if (isTotalCondition) {
       return root.nodes[totalNumberCondition.target]
     }
-    return undefined
   }
   const specificNumberConditions = selectedEdge.conditionals.specificNumberConditions
   if (specificNumberConditions) {
-    //todo
-    return undefined
+    const conditionResults = calculateSpecificNumberConditionsResults(
+      specificNumberConditions,
+      userChoices,
+      root.nodes
+    )
+    return conditionResults.id ? conditionResults : undefined
   }
   return undefined
+}
+
+function calculateSpecificNumberConditionsResults(
+  specificNumberConditions: Array<SpecificNumberCondition>,
+  userChoices: Array<WizardQueryParamObject>,
+  nodes: TreeNodes
+): TreeResultNode {
+  return specificNumberConditions.reduce((acc, curr) => {
+    const totalSpecific = calculateSpecificConditionTotal(userChoices, curr.choices)
+    const isMoreThanCondition = compareTotalOrSpecificCondition(curr, totalSpecific)
+    if (isMoreThanCondition) {
+      return createConditionResult(acc, nodes[curr.target])
+    }
+    return acc
+  }, {} as TreeResultNode)
+}
+
+function calculateSpecificConditionTotal(
+  userChoices: Array<WizardQueryParamObject>,
+  conditionChoices: Array<string>
+): number {
+  return userChoices
+    .filter((uc) => uc.choice.some((uc) => conditionChoices.some((cc) => cc === uc)))
+    .reduce((acc, curr) => {
+      return acc + Number(curr.value)
+    }, 0)
+}
+
+function createConditionResult(result: TreeResultNode, node: TreeNode): TreeResultNode {
+  const conditionResultsArray = forceArray(result.conditionResults ?? [])
+  const isDuplicateResult = conditionResultsArray.find((cr) => cr.id === node.id)
+  if (!result.id) {
+    result = node as TreeResultNode
+  }
+  return {
+    ...result,
+    conditionResults: isDuplicateResult
+      ? conditionResultsArray
+      : [...conditionResultsArray, node as TreeResultNode],
+  }
 }
 
 function findTargetEdge(
@@ -159,16 +206,21 @@ function getNextNode(
   return root.nodes[selectedEdge?.target]
 }
 
-function compareTotalCondition(totalCondition, totalValue: number): boolean {
-  switch (totalCondition.operator) {
+function compareTotalOrSpecificCondition(
+  condition: SpecificNumberCondition | TotalNumberCondition,
+  value: number
+): boolean {
+  switch (condition.operator) {
     case 'eq':
-      return totalValue === totalCondition.value
+      return value === condition.value
     case 'lt':
-      return totalValue < totalCondition.value
+      return value < condition.value
     case 'gt':
-      return totalValue > totalCondition.value
+      return value > condition.value
+    case 'neq':
+      return value !== condition.value
     case 'between':
-      return totalValue > totalCondition.value && totalValue < totalCondition.toValue
+      return value > condition.value && value < condition.value
     default:
       return false
   }
