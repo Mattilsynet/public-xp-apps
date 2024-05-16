@@ -72,6 +72,7 @@ function getResultCalculatorNodes(
         fallbackResult: fallbackResultUUID
           ? (questionAndResultNodes[fallbackResultUUID] as CoreCommon)
           : undefined,
+        groupByQuestionId: node.data.groupByQuestionId,
         resultGroups: forceArray(node.data.resultGroups ?? []).map((resultGroup) => {
           return forceArray(resultGroup.result ?? []).map<TreeResultWithConditions>((result) => {
             const resultsWithCondition = resultWithConditions[result]

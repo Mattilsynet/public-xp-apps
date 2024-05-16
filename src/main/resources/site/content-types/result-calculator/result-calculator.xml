@@ -36,6 +36,16 @@
         <allowPath>./*</allowPath>
       </config>
     </input>
+
+    <input name="groupByQuestionId" type="ContentSelector">
+      <label>Grupper resultater med betingelse bassert på</label>
+      <occurrences minimum="0" maximum="1" />
+      <config>
+        <allowContentType>question</allowContentType>
+      </config>
+    </input>
+
+
     <field-set>
       <label i18n="resultCalculator.label">Oppsummering</label>
       <items>

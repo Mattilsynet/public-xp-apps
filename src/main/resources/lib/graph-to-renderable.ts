@@ -60,21 +60,66 @@ export function mapNodeToRenderable(
       conditionResults: step.node.conditionResults,
     }
   } else if (isResultCalculator(step.node)) {
-    const answers = flatten(
-      userChoices.map(({ choice, id }) => {
-        if (id.indexOf('_') !== -1) {
-          return id.split('_')[1]
-        }
-        return choice
-      })
-    ) as Array<string>
+    const choiceGroups = groupChoices(userChoices, choiceMap, step.node.groupByQuestionId)
 
     return {
       type: step.node.type,
       id: step.node.id,
-      results: getResultsFromResultCalculatorNode(step.node, choiceMap, answers),
+      resultGroups: choiceGroups.map(({ title, answers }) => {
+        return {
+          title,
+          results: getResultsFromResultCalculatorNode(step.node, choiceMap, answers),
+        }
+      }),
     }
   }
+}
+
+export function groupChoices(
+  userChoices: Array<WizardQueryParamObject>,
+  choiceMap: TranslatedChoiceMap,
+  id?: string
+): Array<{ title: string | undefined; answers: Array<string> }> {
+  if (!id) {
+    return [
+      {
+        title: undefined,
+        answers: flatten(
+          userChoices.map(({ choice, id }) => {
+            return choice
+          })
+        ) as Array<string>,
+      },
+    ]
+  }
+  const choiceGroups = userChoices.reduce((acc, curr) => {
+    if (curr.id === id) {
+      return [
+        ...acc,
+        ...curr.choice.map((choice) => {
+          return {
+            id: curr.id,
+            choice,
+          }
+        }),
+      ]
+    }
+    return acc
+  }, [])
+
+  return choiceGroups.map((cg) => {
+    return {
+      title: choiceMap[cg.choice].text,
+      answers: userChoices.reduce((acc, curr) => {
+        if (cg.id === curr.id && !acc.find((a) => a === cg.choice)) {
+          return [...acc, cg.choice]
+        } else if (cg.id === curr.id) {
+          return acc
+        }
+        return [...acc, ...curr.choice]
+      }, []),
+    }
+  })
 }
 
 export function mapNumberOptions(step: WizardStep): Array<WizardNumberOptions> {

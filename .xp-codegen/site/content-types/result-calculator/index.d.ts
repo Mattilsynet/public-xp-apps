@@ -16,6 +16,11 @@ export type ResultCalculator = {
   fallbackResult?: string;
 
   /**
+   * Grupper resultater med betingelse bassert på
+   */
+  groupByQuestionId?: string;
+
+  /**
    * Tittel for oppsummering
    */
   summaryPageTitle: string;
