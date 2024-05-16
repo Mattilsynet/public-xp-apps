@@ -2,6 +2,7 @@ import {
   MultiSelectOption,
   RadioOptions,
   TranslatedChoiceMap,
+  TreeResultCalculatorNode,
   WizardNumberOptions,
   WizardRenderNode,
   WizardStep,
@@ -68,7 +69,11 @@ export function mapNodeToRenderable(
       resultGroups: choiceGroups.map(({ title, answers }) => {
         return {
           title,
-          results: getResultsFromResultCalculatorNode(step.node, choiceMap, answers),
+          results: getResultsFromResultCalculatorNode(
+            step.node as TreeResultCalculatorNode,
+            choiceMap,
+            answers
+          ),
         }
       }),
     }
