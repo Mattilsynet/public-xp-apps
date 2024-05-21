@@ -14,6 +14,11 @@
       </help-text>
       <occurrences minimum="0" maximum="0" />
       <items>
+        <input name="doNotUseThisOnlyForEditors" type="TextLine">
+          <label>Navn på gruppe (kun for visning)</label>
+          <help-text>Brukes kun for visning i Content Studio. Det er lettere å få oversikt når gruppene er minimert</help-text>
+          <occurrences minimum="0" maximum="1" />
+        </input>
         <input name="result" type="ContentSelector">
           <label>Resultat</label>
           <help-text>Det øverste resultatet som oppfyller sine egne betingelser vil vises. Hvis du bruker "resultat uten

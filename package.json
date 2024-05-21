@@ -10,9 +10,11 @@
     "build": "concurrently -c auto -g --timings npm:build:*",
     "minify": "concurrently -c auto -g --timings 'npm:build:browser -- --minify' npm:build:sass 'npm:build:server -- --minify' 'npm:build:static -- --minify'",
     "build:server": "npx tsup -d build/resources/main",
+    "build:static": "npx tsup -d build/resources/main/static",
     "check": "concurrently -c auto -g --timings npm:lint npm:check:types",
     "check:types": "concurrently -g -r --timings npm:check:types:*",
     "check:types:server": "npx tsc --noEmit",
+    "check:types:static": "npx tsc --noEmit -p src/main/resources/static/tsconfig.json",
     "lint": "eslint --cache src/main/resources/**/*.ts",
     "test": "jest --no-cache --coverage",
     "watch": "concurrently -c auto npm:watch:*",
@@ -22,7 +24,10 @@
   },
   "dependencies": {
     "@enonic/js-utils": "^1",
-    "dayjs": "^1"
+    "dayjs": "^1",
+    "react": "^18",
+    "react-dom": "^18",
+    "reactflow": "^11.11.3"
   },
   "devDependencies": {
     "@enonic-types/global": "^7",
@@ -56,6 +61,7 @@
     "@item-enonic-types/lib-graphql": "^2.0.3",
     "@jest/globals": "^29.6.4",
     "@prettier/plugin-xml": "^3.4.1",
+    "@types/react": "^18",
     "@typescript-eslint/eslint-plugin": "^7",
     "browser-sync": "^3",
     "concurrently": "^8",
@@ -64,6 +70,8 @@
     "eslint": "^8",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-jsx-a11y": "^6",
+    "eslint-plugin-react": "^7",
+    "eslint-plugin-react-hooks": "^4",
     "glob": "^10.3.12",
     "jest": "^29.7.0",
     "prettier": "^3.2.5",

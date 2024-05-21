@@ -76,17 +76,8 @@ node {
 	version = '18.17.1'
 }
 
-tasks.register('updateNodePackageVersion', Task) {
-  dependsOn npmBuild
-  def version = project.findProperty('version')
-  def packageJsonFile = file('package/package.json')
-  def packageJson = new groovy.json.JsonSlurper().parseText(packageJsonFile.text)
-  packageJson.version = version
-  packageJsonFile.write(new groovy.json.JsonBuilder(packageJson).toPrettyString())
-}
-
 tasks.withType(Copy).configureEach {
-	includeEmptyDirs = false
+  includeEmptyDirs = false
 }
 
 tasks.register('dev', NpmTask) {
@@ -140,8 +131,19 @@ tasks.register('npmBuild', NpmTask) {
 		'LOG_LEVEL_FROM_GRADLE': gradle.startParameter.logLevel.toString(),
 		'NODE_ENV': project.hasProperty('dev') || project.hasProperty('development') ? 'development' : 'production'
 	]
+  inputs.dir 'node_modules/react'
+  inputs.dir 'node_modules/react-dom'
 	inputs.dir 'src/main/resources'
 	outputs.dir 'build/resources/main'
+}
+
+tasks.register('updateNodePackageVersion', Task) {
+  dependsOn npmBuild
+  def version = project.findProperty('version')
+  def packageJsonFile = file('package/package.json')
+  def packageJson = new groovy.json.JsonSlurper().parseText(packageJsonFile.text)
+  packageJson.version = version
+  packageJsonFile.write(new groovy.json.JsonBuilder(packageJson).toPrettyString())
 }
 
 tasks.register('npmPackageInstall', NpmTask) {
@@ -177,4 +179,5 @@ processResources {
 	exclude '**/*.sass'
 	exclude '**/*.png'
 	exclude '**/*.ts'
+  exclude '**/*.tsx'
 }

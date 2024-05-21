@@ -5,6 +5,11 @@ export type ResultCalculator = {
    */
   resultGroups?: Array<{
     /**
+     * Navn på gruppe (kun for visning)
+     */
+    doNotUseThisOnlyForEditors?: string;
+
+    /**
      * Resultat
      */
     result: Array<string> | string;

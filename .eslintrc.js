@@ -1,28 +1,31 @@
 module.exports = {
-	env: {},
+  env: {},
 
-	extends: [
-		'plugin:@typescript-eslint/eslint-recommended',
-		'plugin:@typescript-eslint/recommended',
-		'plugin:jsx-a11y/recommended',
-		'prettier',
-	],
+  extends: [
+    'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:jsx-a11y/recommended',
+    'plugin:react/recommended',
+    'plugin:jsx-a11y/recommended',
+    'plugin:react-hooks/recommended',
+    'prettier',
+  ],
 
-	ignorePatterns: ['build/**/*.*'],
+  ignorePatterns: ['build/**/*.*'],
 
-	overrides: [
-		{
-			files: ['**/*.ts'],
-		},
-	],
+  overrides: [
+    {
+      files: ['**/*.ts', '**/*.tsx'],
+    },
+  ],
 
-	plugins: ['jsx-a11y', '@typescript-eslint'],
+  plugins: ['jsx-a11y', '@typescript-eslint'],
 
-	root: true,
+  root: true,
 
-	rules: {
-		// https://eslint.org/docs/rules
-		'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-		'@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-	},
+  rules: {
+    // https://eslint.org/docs/rules
+    'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+    '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+  },
 } // module.exports
