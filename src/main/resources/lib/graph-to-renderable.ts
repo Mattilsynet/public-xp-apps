@@ -80,6 +80,7 @@ export function mapNodeToRenderable(
           ),
         }
       }),
+      summaryPageTitle: step.node.summaryPageTitle,
     }
   }
 }

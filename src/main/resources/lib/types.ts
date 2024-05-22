@@ -54,6 +54,7 @@ export type TreeResultCalculatorNode = {
   groupByQuestionId?: string
   resultGroups: TreeResultGroups
   fallbackResult?: CoreCommon
+  summaryPageTitle?: string
 }
 export type TreeQuestionNode = {
   id: string
@@ -151,6 +152,7 @@ export type WizardRenderNode = {
   type?: string
   resultGroups?: ResultGroups
   conditionResults?: Array<TreeResultNode>
+  summaryPageTitle?: string
   helpText?: string
   collapsableButtonText?: {
     closedLabel: string
