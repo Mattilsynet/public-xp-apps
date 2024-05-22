@@ -155,7 +155,9 @@ function getQuestionAndResultNodes(
       mapped = {
         choiceType,
         question: node.data.question,
+        helpText: processHtml({ value: node.data.helpText }),
         targets: forceArray(choiceTypeData?.nextStep ?? []),
+        collapsableButtonText: choiceTypeData.collapsableButtonText,
         errorMessages: choiceTypeData.errorMessages,
       }
     } else if (isResultNodeContent(node)) {

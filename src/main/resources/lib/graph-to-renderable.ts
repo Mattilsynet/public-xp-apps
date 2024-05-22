@@ -26,6 +26,8 @@ export function mapNodeToRenderable(
           errorMessages: step.node.errorMessages,
           question: step.node.question,
           options: mapNumberOptions(step),
+          helpText: step.node.helpText,
+          collapsableButtonText: step.node.collapsableButtonText,
         }
       case 'checkbox':
         return {
@@ -34,6 +36,7 @@ export function mapNodeToRenderable(
           errorMessages: step.node.errorMessages,
           question: step.node.question,
           options: mapMultiselectOptions(step),
+          helpText: step.node.helpText,
           preferredChoices: step.preferredChoices?.map((c) => ({
             value: c.id,
             text: c.text,
@@ -47,6 +50,7 @@ export function mapNodeToRenderable(
           errorMessages: step.node.errorMessages,
           question: step.node.question,
           options: mapRadioOptions(step),
+          helpText: step.node.helpText,
         }
       default:
         log.info(`TODO error`)

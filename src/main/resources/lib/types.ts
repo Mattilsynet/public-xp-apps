@@ -60,8 +60,14 @@ export type TreeQuestionNode = {
   type: string
   targets?: Array<string>
   question?: string
+  helpText?: string
   choiceType: Question['choiceType']['_selected']
+  resultGroups: TreeResultGroups
   choices?: Array<string>
+  collapsableButtonText?: {
+    closedLabel: string
+    openLabel: string
+  }
   errorMessages: {
     required: string
     // number branch specific
@@ -72,6 +78,7 @@ export type TreeQuestionNode = {
 export type TreeResultNode = {
   type: string
   id: string
+  resultGroups: TreeResultGroups
   conditionResults?: Array<Omit<TreeResultNode, 'conditionResults'>>
 } & Result
 export type TreeNode = TreeQuestionNode | TreeResultNode | TreeResultCalculatorNode
@@ -144,6 +151,11 @@ export type WizardRenderNode = {
   type?: string
   resultGroups?: ResultGroups
   conditionResults?: Array<TreeResultNode>
+  helpText?: string
+  collapsableButtonText?: {
+    closedLabel: string
+    openLabel: string
+  }
   choiceType?: 'radio' | 'number' | 'checkbox'
   errorMessages?: WizardErrorMessages
   options?: Array<RadioOptions | MultiSelectOption | WizardNumberOptions>

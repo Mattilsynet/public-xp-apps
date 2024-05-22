@@ -6,6 +6,11 @@ export type Question = {
   question: string;
 
   /**
+   * Hjelpetekst
+   */
+  helpText?: string;
+
+  /**
    * Valgtype
    */
   choiceType:
@@ -75,6 +80,21 @@ export type Question = {
            * Grener
            */
           nextStep?: Array<string> | string;
+
+          /**
+           * Lukkbar Knapptekst
+           */
+          collapsableButtonText: {
+            /**
+             * Knapptekst åpen
+             */
+            openLabel: string;
+
+            /**
+             * Knapptekst lukket
+             */
+            closedLabel: string;
+          };
 
           /**
            * Feilmeldinger

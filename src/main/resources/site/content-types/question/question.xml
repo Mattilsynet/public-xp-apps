@@ -12,6 +12,16 @@
 			<occurrences minimum="1" maximum="1" />
 		</input>
 
+		<input type="HtmlArea" name="helpText">
+			<label i18n="">Hjelpetekst</label>
+			<occurrences minimum="0" maximum="1" />
+      <config>
+        <exclude>*</exclude>
+        <include>Format | Bold Italic Strike RemoveFormat | BulletedList NumberedList Blockquote | Subscript Superscript | SpecialChar Anchor Image Macro Link Unlink | Table</include>
+        <allowHeadings>h2 h3 h4</allowHeadings>
+      </config>
+		</input>
+
 		<option-set name="choiceType">
 			<label i18n="">Valgtype</label>
 			<occurrences minimum="1" maximum="1" />
@@ -84,6 +94,24 @@
 								<allowPath>./*</allowPath>
 							</config>
 						</input>
+
+            <item-set name="collapsableButtonText">
+              <label i18n="">Lukkbar Knapptekst</label>
+              <occurrences minimum="1" maximum="1"/>
+              <items>
+                <input type="textLine" name="openLabel">
+                  <label i18n="">Knapptekst åpen</label>
+                  <occurrences minimum="1" maximum="1"/>
+                  <default>Skjul</default>
+                </input>
+
+                <input type="TextLine" name="closedLabel">
+                  <label i18n="">Knapptekst lukket</label>
+                  <occurrences minimum="1" maximum="1"/>
+                  <default>Vis</default>
+                </input>
+              </items>
+            </item-set>
 
             <item-set name="errorMessages">
               <label>Feilmeldinger</label>
