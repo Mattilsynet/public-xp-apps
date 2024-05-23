@@ -4,6 +4,11 @@ import ReactFlow, { addEdge, Background, Controls, useEdgesState, useNodesState 
 import 'reactflow/dist/style.css'
 import './App.sass'
 import { AppData } from './previewTypes'
+import { CustomNode } from './CustomNode'
+import { CustomEdge } from './CustomEdge'
+
+const nodeTypes = { customNode: CustomNode }
+const edgeTypes = { customEdge: CustomEdge }
 
 export function App(data: AppData) {
   const [nodes, setNodes, onNodesChange] = useNodesState(data.nodes)
@@ -23,7 +28,9 @@ export function App(data: AppData) {
             edges={edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
-            onConnect={onConnect}>
+            onConnect={onConnect}
+            nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}>
             <Background />
             <Controls />
           </ReactFlow>

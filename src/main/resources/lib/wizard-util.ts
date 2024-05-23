@@ -4,14 +4,14 @@ export const SCHEMA_TAG_SEPARATOR = '_'
 export const SCHEMA_LIST_SEPARATOR = ','
 export type WizardQueryParamObject = { id: string; choice: Array<string>; value?: string | number }
 
-export function isRadioButton(node: WizardRenderNode): node is WizardRenderNode {
+export function isRadioButton(node?: WizardRenderNode): node is WizardRenderNode {
   return node?.choiceType === 'radio'
 }
 
-export function isNumbers(node: WizardRenderNode): node is WizardRenderNode {
+export function isNumbers(node?: WizardRenderNode): node is WizardRenderNode {
   return node?.choiceType === 'number'
 }
-export function isMultiSelect(node: WizardRenderNode): node is WizardRenderNode {
+export function isMultiSelect(node?: WizardRenderNode): node is WizardRenderNode {
   return node?.choiceType === 'checkbox'
 }
 

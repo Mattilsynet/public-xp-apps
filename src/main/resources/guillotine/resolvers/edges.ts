@@ -57,6 +57,7 @@ export function resolveEdges(
     return {
       ...acc,
       [edge._id]: {
+        displayName: edge.displayName,
         id: edge._id,
         type: edge.type,
         source,

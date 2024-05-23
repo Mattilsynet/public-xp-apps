@@ -60,14 +60,14 @@ export const isResult = (node: TreeNode): node is TreeResultNode =>
 
 // RENDERING TYPE CHECKS
 
-export function isRadioButton(node: WizardRenderNode): boolean {
+export function isRadioButton(node?: WizardRenderNode): boolean {
   return node?.choiceType === 'radio'
 }
 
-export function isNumbers(node: WizardRenderNode): boolean {
+export function isNumbers(node?: WizardRenderNode): boolean {
   return node?.choiceType === 'number'
 }
 
-export function isMultiSelect(node: WizardRenderNode): boolean {
+export function isMultiSelect(node?: WizardRenderNode): boolean {
   return node?.choiceType === 'checkbox'
 }

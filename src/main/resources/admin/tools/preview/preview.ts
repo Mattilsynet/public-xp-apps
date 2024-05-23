@@ -70,7 +70,7 @@ const get = (request: Request): any => {
       }
       const wizard = getContent<Content<Wizard>>({ key: selectedWizard })
       const wizardPath = wizard?._path?.replace('/content', '')
-      const errors = []
+      const errors: string[] = []
       const choiceMaps = getChoiceMaps()
       const nodes = resolveNodes(wizardPath, choiceMaps, errors)
       const edges = resolveEdges(wizardPath, nodes, choiceMaps, errors)
@@ -92,8 +92,9 @@ const get = (request: Request): any => {
         traversedGraph.renderSteps,
         mapQueryToValues(queryString)
       )
+      const enonicEditPath = `/admin/tool/com.enonic.app.contentstudio/main/mattilsynet/edit/` //TODO make this dynamic
       return {
-        ...mapToReactFlow({ ...root, validationErrors, traversedGraph }),
+        ...mapToReactFlow({ ...root, validationErrors, traversedGraph }, enonicEditPath, errors),
         selectedWizard,
         wizards,
       }

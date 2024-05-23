@@ -104,6 +104,7 @@ export type TreeEdgeNumberConditionals = {
   specificNumberConditions?: Array<SpecificNumberCondition>
 }
 export type TreeEdge = {
+  displayName: string
   id: string
   type: string
   source: string

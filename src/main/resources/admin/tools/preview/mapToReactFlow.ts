@@ -1,11 +1,21 @@
 import { AppData } from '/static/admin/previewTypes'
 import { Edge, Node } from 'reactflow'
 import { isQuestion, isResult, isResultCalculator } from '/lib/type-check'
-import { TreeQuestionNode, TreeResultCalculatorNode, WizardRoot } from '/lib/types'
+import {
+  SpecificNumberCondition,
+  TotalNumberCondition,
+  TreeQuestionNode,
+  TreeResultCalculatorNode,
+  WizardRoot,
+} from '/lib/types'
 
 const X_OFFSET = 200
 
-export function mapToReactFlow(data: WizardRoot): AppData {
+export function mapToReactFlow(
+  data: WizardRoot,
+  enonicEditPath: string,
+  errors: string[]
+): AppData {
   const currentPathMap: { [key: string]: boolean } = data.traversedGraph?.renderSteps?.reduce(
     (acc, step) => {
       acc[step.id] = true
@@ -33,15 +43,19 @@ export function mapToReactFlow(data: WizardRoot): AppData {
       visited[nodeId] = true
 
       const nodeData = data.nodes[nodeId]
+      if (!nodeData) {
+        errors.push('Fant ikke noden')
+        continue
+      }
       let label = nodeData.id
       let other = undefined
       if (isResult(nodeData)) {
         label = nodeData.title
         other = {
+          noSourceHandle: true,
           style: {
             background: 'hsla(60, 100%, 50%, 0.10)',
           },
-          type: 'output',
         }
       } else if (isQuestion(nodeData)) {
         label = nodeData.question
@@ -60,13 +74,32 @@ export function mapToReactFlow(data: WizardRoot): AppData {
       }
       nodes.push({
         id: nodeId,
-        data: { ...nodeData, label: label?.substring(0, 100) },
+        type: 'customNode',
+        data: {
+          ...nodeData,
+          ...other,
+          label: label?.substring(0, 100),
+          enonicEditPath: enonicEditPath + nodeId,
+        },
         position: { x: X_OFFSET + x, y },
-        ...other,
+        // @ts-ignore
+        sourcePosition: 'bottom',
+        // @ts-ignore
+        targetPosition: 'top',
       })
 
       if (isQuestion(nodeData)) {
-        mapQuestionNode(nodeData, data, edges, nodeId, currentPathMap, visited, queue, iteration)
+        mapQuestionNode(
+          nodeData,
+          data,
+          edges,
+          nodeId,
+          currentPathMap,
+          visited,
+          queue,
+          iteration,
+          enonicEditPath
+        )
       } else if (isResultCalculator(nodeData)) {
         mapResultCalculator(
           nodeData,
@@ -77,7 +110,8 @@ export function mapToReactFlow(data: WizardRoot): AppData {
           currentPathMap,
           visited,
           queue,
-          iteration
+          iteration,
+          enonicEditPath
         )
       }
     }
@@ -97,7 +131,8 @@ function mapResultCalculator(
   },
   visited: { [p: string]: boolean },
   queue: { nodeId: string; x: number; y: number }[],
-  iteration: number
+  iteration: number,
+  enonicEditPath: string
 ) {
   nodeData.resultGroups?.forEach((group, index) => {
     const groupId = nodeData.id + index
@@ -105,9 +140,9 @@ function mapResultCalculator(
       id: groupId,
       type: 'output',
       data: undefined,
-      position: { x: 200 * index, y: (iteration + 1) * 100 },
+      position: { x: 225 * index, y: (iteration + 1) * 100 },
       style: {
-        width: 200,
+        width: 222,
         height: 100 * group.length,
         backgroundColor: 'rgba(240,240,240,0.25)',
       },
@@ -121,16 +156,19 @@ function mapResultCalculator(
       const resultIsRendered = currentPathMap[resultNode.id]
       nodes.push({
         id: resultNode.id,
-        type: 'output',
-        // @ts-ignore
-        targetPosition: 'left',
-        data: { label: resultNode.displayName?.substring(0, 70) },
+        type: 'customNode',
+        data: {
+          noTargetHandle: true,
+          noSourceHandle: true,
+          label: resultNode.displayName?.substring(0, 70),
+          enonicEditPath: enonicEditPath + resultNode.id,
+          style: resultIsRendered
+            ? { background: 'hsla(118, 100%, 69%, 0.3)', width: 180 }
+            : { width: 180 },
+        },
         position: { x: 10, y: 100 * index + 10 },
         parentId: groupId,
         extent: 'parent',
-        style: resultIsRendered
-          ? { background: 'hsla(118, 100%, 69%, 0.3)', width: 180 }
-          : { width: 180 },
       })
     })
   })
@@ -142,10 +180,15 @@ function mapResultCalculator(
       nodeData.resultGroups?.every((group) => group.every((result) => !currentPathMap[result.id]))
     nodes.push({
       id: fallbackId,
-      type: 'output',
-      // @ts-ignore
+      type: 'customNode',
+      // @ts-expect-error import of Position type results in error for some reason
       targetPosition: 'right',
-      data: { label: 'Fallback: ' + nodeData.fallbackResult.title?.substring(0, 40) },
+      data: {
+        noSourceHandle: true,
+        label: 'Fallback: ' + nodeData.fallbackResult.title?.substring(0, 40),
+        // @ts-expect-error id is not in type, but exists in data
+        enonicEditPath: enonicEditPath + nodeData.fallbackResult?.id,
+      },
       position: { x: 0, y: iteration * 100 - 50 },
       style: fallbackIsRendered
         ? { background: 'hsla(118, 100%, 69%, 0.3)', width: 180 }
@@ -169,19 +212,26 @@ function mapQuestionNode(
   },
   visited: { [p: string]: boolean },
   queue: { nodeId: string; x: number; y: number }[],
-  iteration: number
+  iteration: number,
+  enonicEditPath: string
 ) {
   nodeData.targets?.forEach((edgeId, index) => {
     let nPushed = 0
     const edgeData = data.edges[edgeId]
     edges.push({
       id: edgeId,
+      type: 'customEdge',
       source: nodeId,
       target: edgeData.target,
+      data: {
+        ...edgeData,
+        enonicEditPath: enonicEditPath + edgeId,
+      },
+      label: edgeData.displayName,
       animated: currentPathMap[edgeData.target],
     })
 
-    if (!visited[edgeData.target]) {
+    if (edgeData.target && !visited[edgeData.target]) {
       queue.push({
         nodeId: edgeData.target,
         x: index * 250 + nPushed * 250,
@@ -194,6 +244,11 @@ function mapQuestionNode(
       edges.push({
         id: edgeId + condition.target,
         source: nodeId,
+        label: getConditionLabel(condition),
+        type: 'customEdge',
+        data: {
+          enonicEditPath: enonicEditPath + edgeId,
+        },
         target: condition.target,
         animated: currentPathMap[condition.target],
       })
@@ -207,11 +262,17 @@ function mapQuestionNode(
       }
     })
 
-    const totalConditionTarget = edgeData?.conditionals?.totalNumberCondition?.target
+    const totalCondition = edgeData?.conditionals?.totalNumberCondition
+    const totalConditionTarget = totalCondition?.target
     if (totalConditionTarget && !visited[totalConditionTarget]) {
       edges.push({
         id: edgeId + totalConditionTarget,
         source: nodeId,
+        label: getConditionLabel(totalCondition),
+        type: 'customEdge',
+        data: {
+          enonicEditPath: enonicEditPath + edgeId,
+        },
         target: totalConditionTarget,
         animated: currentPathMap[totalConditionTarget],
       })
@@ -223,4 +284,33 @@ function mapQuestionNode(
       nPushed++
     }
   })
+}
+
+function getConditionLabel(condition: SpecificNumberCondition | TotalNumberCondition): string {
+  function isSpecificNumberCondition(
+    condition: SpecificNumberCondition | TotalNumberCondition
+  ): condition is SpecificNumberCondition {
+    return (condition as SpecificNumberCondition).choices?.length > 0
+  }
+  let operator: string
+  switch (condition.operator) {
+    case 'gt':
+      operator = '>'
+      break
+    case 'lt':
+      operator = '<'
+      break
+    case 'eq':
+      operator = '='
+      break
+    case 'neq':
+      operator = '!='
+      break
+    default:
+      operator = condition.operator
+  }
+  if (isSpecificNumberCondition(condition)) {
+    return `${condition.choices[0]}${condition.choices?.length > 1 ? '...' : ''} ${operator} ${condition.value}`
+  }
+  return `total ${operator} ${condition.value}`
 }
