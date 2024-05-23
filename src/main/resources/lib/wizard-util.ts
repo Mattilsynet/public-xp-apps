@@ -5,14 +5,14 @@ export const SCHEMA_LIST_SEPARATOR = ','
 export type WizardQueryParamObject = { id: string; choice: Array<string>; value?: string | number }
 
 export function isRadioButton(node: WizardRenderNode): node is WizardRenderNode {
-  return node.choiceType === 'radio'
+  return node?.choiceType === 'radio'
 }
 
 export function isNumbers(node: WizardRenderNode): node is WizardRenderNode {
-  return node.choiceType === 'number'
+  return node?.choiceType === 'number'
 }
 export function isMultiSelect(node: WizardRenderNode): node is WizardRenderNode {
-  return node.choiceType === 'checkbox'
+  return node?.choiceType === 'checkbox'
 }
 
 export function mapQueryToValues(query: string): Array<WizardQueryParamObject> {

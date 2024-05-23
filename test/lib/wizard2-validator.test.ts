@@ -3,6 +3,12 @@ import { getData, gqlQueryResponse } from './wizard2-mocks'
 import { getRenderSteps } from '../../src/main/resources/lib/traverse'
 import { validateWizardData } from '../../src/main/resources/lib/validate'
 import { WizardRenderNode } from '../../src/main/resources/lib/types'
+import Log from '@enonic/mock-xp/dist/Log'
+
+// @ts-ignore TS2339: Property 'log' does not exist on type 'typeof globalThis'.
+global.log = Log.createLogger({
+  loglevel: 'warn',
+})
 
 describe('Wizard validator', () => {
   const root = getData(gqlQueryResponse)

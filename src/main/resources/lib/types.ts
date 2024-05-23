@@ -45,6 +45,8 @@ export type TreeResultWithConditions = {
     operator: Operator
     logic: Array<TreeChoiceOrLogic>
   }
+  displayName?: string
+  id?: string
 } & CoreCommon
 
 export type TreeResultGroups = Array<Array<TreeResultWithConditions>>
@@ -145,7 +147,7 @@ export type RadioOptions = {
   text: string
 }
 export type WizardNumberOptions = { name: string; value: string; label: string }
-export type ResultGroups = Array<{ title: string; results: Array<CoreCommon> }>
+export type ResultGroups = Array<{ title: string; results: Array<CoreCommon & { id?: string }> }>
 export type WizardRenderNode = {
   id: string
   // todo split to different types

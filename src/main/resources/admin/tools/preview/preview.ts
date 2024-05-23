@@ -16,7 +16,18 @@ import { IS_DEV_MODE } from './runMode'
 import { getAdminUrl, immutableGetter } from './urlHelper'
 import { FILEPATH_MANIFEST_CJS, FILEPATH_MANIFEST_NODE_MODULES, GETTER_ROOT } from './constants'
 import { Request } from '/types'
-import { AppData } from '../../../static/admin/previewTypes'
+import { getChoiceMaps } from '/guillotine/resolvers/choices'
+import { resolveNodes } from '/guillotine/resolvers/nodes'
+import { resolveEdges } from '/guillotine/resolvers/edges'
+import { run } from '/lib/xp/context'
+import { mapToReactFlow } from '/admin/tools/preview/mapToReactFlow'
+import { traverseGraph } from '/lib/traverse'
+import { validateWizardData } from '/lib/validate'
+import { mapQueryToValues } from '/lib/wizard-util'
+import { get as getContent, query } from '/lib/xp/content'
+import { wizardType } from '/lib/type-check'
+import { Wizard } from '/codegen/site/content-types'
+import { Content } from '@enonic-types/lib-content'
 
 const router = Router()
 
@@ -42,10 +53,52 @@ const get = (request: Request): any => {
       )
     }
   }
-
-  const data: AppData = {
-    hello: "i'm some data",
-  }
+  const data = run(
+    {
+      repository: 'com.enonic.cms.mattilsynet', // todo change to selectable repository. AppConfig?
+      branch: 'draft', // todo make selectable through GUI
+      principals: ['role:system.authenticated'],
+    },
+    () => {
+      let wizards = undefined
+      const selectedWizard = request.params['wizard']
+      if (!selectedWizard) {
+        wizards = query({
+          filters: { hasValue: { field: 'type', values: [wizardType('wizard')] } },
+        }).hits.map((wizard) => ({ id: wizard._id, title: wizard.displayName }))
+        return { wizards }
+      }
+      const wizard = getContent<Content<Wizard>>({ key: selectedWizard })
+      const wizardPath = wizard?._path?.replace('/content', '')
+      const errors = []
+      const choiceMaps = getChoiceMaps()
+      const nodes = resolveNodes(wizardPath, choiceMaps, errors)
+      const edges = resolveEdges(wizardPath, nodes, choiceMaps, errors)
+      const root = {
+        rootNode: wizard.data?.question,
+        nodes,
+        edges,
+        choices: choiceMaps.translatedChoices,
+        errors,
+        validTree: errors.length === 0,
+      }
+      const queryString = Object.keys(request.params ?? {})
+        ?.reduce((acc, key) => {
+          return acc.concat(`&${key}=${request.params[key]}`)
+        }, '')
+        ?.replace('&', '')
+      const traversedGraph = traverseGraph(queryString, root)
+      const validationErrors = validateWizardData(
+        traversedGraph.renderSteps,
+        mapQueryToValues(queryString)
+      )
+      return {
+        ...mapToReactFlow({ ...root, validationErrors, traversedGraph }),
+        selectedWizard,
+        wizards,
+      }
+    }
+  )
 
   const params = {
     applicationIconUrl: getAdminUrl(
@@ -91,7 +144,12 @@ const get = (request: Request): any => {
       },
       toolName
     ),
-    data: JSON.stringify(data),
+    data: JSON.stringify(data, (_, value) => {
+      if (typeof value === 'string') {
+        return value.replace(/"/g, "'").replace(/\\+/g, '').replace(/\s/g, ' ')
+      }
+      return value
+    }),
   }
 
   return {

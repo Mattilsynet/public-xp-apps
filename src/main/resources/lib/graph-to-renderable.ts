@@ -66,7 +66,6 @@ export function mapNodeToRenderable(
     }
   } else if (isResultCalculator(step.node)) {
     const choiceGroups = groupChoices(userChoices, choiceMap, step.node.groupByQuestionId)
-
     return {
       type: step.node.type,
       id: step.node.id,

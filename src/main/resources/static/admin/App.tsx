@@ -1,21 +1,13 @@
 import React, { useCallback } from 'react'
-import ReactFlow, { addEdge, useEdgesState, useNodesState } from 'reactflow'
+import ReactFlow, { addEdge, Background, Controls, useEdgesState, useNodesState } from 'reactflow'
 
 import 'reactflow/dist/style.css'
 import './App.sass'
 import { AppData } from './previewTypes'
 
-const initialNodes = [
-  { id: '1', position: { x: 0, y: 0 }, data: { label: '1' } },
-  { id: '2', position: { x: 0, y: 100 }, data: { label: '2' } },
-]
-const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }]
-
 export function App(data: AppData) {
-  console.log('data', data)
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
-
+  const [nodes, setNodes, onNodesChange] = useNodesState(data.nodes)
+  const [edges, setEdges, onEdgesChange] = useEdgesState(data.edges)
   const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), [setEdges])
   return (
     <>
@@ -24,15 +16,28 @@ export function App(data: AppData) {
           <span className="app-name">Wizard - forhåndsvisning veiviser</span>
         </div>
       </div>
-      <div className="react-flow-container">
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-        />
-      </div>
+      {data.selectedWizard ? (
+        <div className="react-flow-container">
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}>
+            <Background />
+            <Controls />
+          </ReactFlow>
+        </div>
+      ) : (
+        <div className="choose-wizard-container">
+          <h1>Velg en veiviser</h1>
+          {data.wizards?.map((wizard, id) => (
+            <a href={`${window.location.pathname}?wizard=${wizard.id}`} key={id}>
+              {wizard.title}
+            </a>
+          ))}
+        </div>
+      )}
     </>
   )
 }

@@ -2,6 +2,12 @@ import { getData, gqlQueryResponse } from './wizard2-mocks'
 import { getRenderSteps } from '../../src/main/resources/lib/traverse'
 import { describe, expect, it } from '@jest/globals'
 import { mapQueryToValues } from '../../src/main/resources/lib/wizard-util'
+import Log from '@enonic/mock-xp/dist/Log'
+
+// @ts-ignore TS2339: Property 'log' does not exist on type 'typeof globalThis'.
+global.log = Log.createLogger({
+  loglevel: 'warn',
+})
 
 describe('Utils', function () {
   it('getRenderSteps first step', () => {

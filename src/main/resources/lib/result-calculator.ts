@@ -16,7 +16,7 @@ export function shouldRenderResultWithConditions(
   displayCriteria: TreeResultWithConditions['displayCriteria'] | TreeDisplayCriteriaChoice,
   choiceMap: TranslatedChoiceMap,
   answers?: Array<string>
-) {
+): boolean {
   const { type, operator } = displayCriteria
   if (type === 'choice') {
     const choices = getChoicesFromGroups(displayCriteria.choices, choiceMap)
@@ -50,7 +50,7 @@ export function getResultsFromResultCalculatorNode(
   node: TreeResultCalculatorNode,
   choiceMap: TranslatedChoiceMap,
   answers?: Array<string>
-): Array<CoreCommon> {
+): Array<CoreCommon & { id?: string }> {
   const { resultGroups, fallbackResult } = node
   const result =
     resultGroups?.reduce((acc, resultGroup) => {
@@ -58,8 +58,8 @@ export function getResultsFromResultCalculatorNode(
         return shouldRenderResultWithConditions(resultGroup.displayCriteria, choiceMap, answers)
       })
       if (resultInGroupToRender) {
-        const { title, intro, text } = resultInGroupToRender
-        return [...acc, { title, intro, text }]
+        const { title, intro, text, id } = resultInGroupToRender
+        return [...acc, { title, intro, text, id }]
       }
       return acc
     }, []) || []

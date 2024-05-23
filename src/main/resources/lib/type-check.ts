@@ -8,7 +8,7 @@ import {
   Result,
   ResultCalculator,
   ResultWithConditions,
-} from '.xp-codegen/site/content-types'
+} from '/codegen/site/content-types'
 import {
   TreeNode,
   TreeQuestionNode,
@@ -61,13 +61,13 @@ export const isResult = (node: TreeNode): node is TreeResultNode =>
 // RENDERING TYPE CHECKS
 
 export function isRadioButton(node: WizardRenderNode): boolean {
-  return node.choiceType === 'radio'
+  return node?.choiceType === 'radio'
 }
 
 export function isNumbers(node: WizardRenderNode): boolean {
-  return node.choiceType === 'number'
+  return node?.choiceType === 'number'
 }
 
 export function isMultiSelect(node: WizardRenderNode): boolean {
-  return node.choiceType === 'checkbox'
+  return node?.choiceType === 'checkbox'
 }

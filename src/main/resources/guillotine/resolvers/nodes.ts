@@ -88,6 +88,8 @@ function getResultCalculatorNodes(
     } else if (isResultWithConditionsContent(node)) {
       resultWithConditions[node._id] = {
         ...node.data,
+        id: node._id,
+        displayName: node.displayName,
         text: processHtml({ value: node.data.text }),
         displayCriteria: {
           type: 'logic',
@@ -166,7 +168,7 @@ function getQuestionAndResultNodes(
         text: processHtml({ value: node.data.text }),
       }
     } else if (!isResultCalculatorNodeContent(node) && !isResultWithConditionsContent(node)) {
-      errors.push(`Unknown node type: ${node.type}`)
+      errors.push(`Ukjent node type: ${node.type}`)
       return acc
     } else {
       return acc
