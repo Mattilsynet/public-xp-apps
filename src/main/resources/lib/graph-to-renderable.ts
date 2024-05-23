@@ -10,7 +10,7 @@ import {
 import { WizardQueryParamObject } from './wizard-util'
 import { isQuestion, isResult, isResultCalculator } from './type-check'
 import { getResultsFromResultCalculatorNode } from './result-calculator'
-import { flatten } from '@enonic/js-utils'
+import { flatten, forceArray } from '@enonic/js-utils'
 
 export function mapNodeToRenderable(
   step: WizardStep,
@@ -163,14 +163,14 @@ export function mapMultiselectOptions(step: WizardStep): Array<MultiSelectOption
 }
 
 export function mapRadioOptions(step: WizardStep): Array<RadioOptions> {
-  if (step.edges.length > 1) {
-    return step.edges.map((edge) => {
-      return {
-        value: edge.choices[0],
-        text: step.choices.find((c) => c.id === edge.choices[0]).text,
-      }
+  return flatten(
+    forceArray(step.edges ?? []).map((edge) => {
+      return forceArray(edge.choices ?? []).map((c) => {
+        return {
+          value: c,
+          text: step.choices.find((choice) => choice.id === c).text,
+        }
+      })
     })
-  }
-  //todo??
-  return []
+  ) as Array<RadioOptions>
 }
