@@ -19,34 +19,31 @@
           <help-text>Brukes kun for visning i Content Studio. Det er lettere å få oversikt når gruppene er minimert</help-text>
           <occurrences minimum="0" maximum="1" />
         </input>
-        <input name="result" type="ContentSelector">
+        <input name="result" type="CustomSelector">
           <label>Resultat</label>
           <help-text>Det øverste resultatet som oppfyller sine egne betingelser vil vises. Hvis du bruker "resultat uten
             betingelser" vil det alltid komme et resultat fra denne gruppa, resultatet må også ligge nederst i lista
           </help-text>
           <occurrences minimum="1" maximum="0" />
           <config>
-            <allowContentType>result-with-conditions</allowContentType>
-            <allowContentType>result</allowContentType>
-            <allowPath>./*</allowPath>
+            <service>result-with-conditions-within-wizard</service>
           </config>
         </input>
       </items>
     </item-set>
-    <input name="fallbackResult" type="ContentSelector">
+    <input name="fallbackResult" type="CustomSelector">
       <label>Resultat som vises hvis ingen av resultatene i gruppene overfor vises</label>
       <occurrences minimum="0" maximum="1" />
       <config>
-        <allowContentType>result</allowContentType>
-        <allowPath>./*</allowPath>
+        <service>result-within-wizard</service>
       </config>
     </input>
 
-    <input name="groupByQuestionId" type="ContentSelector">
+    <input name="groupByQuestionId" type="CustomSelector">
       <label>Grupper resultater med betingelse bassert på</label>
       <occurrences minimum="0" maximum="1" />
       <config>
-        <allowContentType>question</allowContentType>
+        <service>question-within-wizard</service>
       </config>
     </input>
 

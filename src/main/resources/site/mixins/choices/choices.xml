@@ -21,14 +21,12 @@
         <option name="reference">
           <label i18n="">Valg med referanse</label>
           <items>
-            <input name="choices" type="ContentSelector">
+            <input name="choices" type="CustomSelector">
               <label>Valg som fører til neste spørsmål eller resultat</label>
-              <help-text>Kan kun finne valg som ligger på samme nivå (eller dypere) som dette innholdet (../*)</help-text>
+              <help-text>Kan kun finne valg som ligger i denne veiviseren</help-text>
               <occurrences minimum="1" maximum="0" />
               <config>
-                <allowContentType>choice</allowContentType>
-                <allowContentType>choice-group</allowContentType>
-                <allowPath>../*</allowPath>
+                <service>choices-within-wizard</service>
               </config>
             </input>
           </items>
@@ -45,6 +43,7 @@
                 <allowContentType>choice</allowContentType>
                 <allowContentType>choice-group</allowContentType>
                 <treeMode>true</treeMode>
+                <allowPath>./*</allowPath>
                 <allowPath>*/veiviser-valg/*</allowPath>
               </config>
             </input>

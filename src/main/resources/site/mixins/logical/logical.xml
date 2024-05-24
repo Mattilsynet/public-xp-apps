@@ -52,6 +52,8 @@
                     <allowContentType>choice</allowContentType>
                     <allowContentType>choice-group</allowContentType>
                     <treeMode>true</treeMode>
+                    <allowPath>./*</allowPath>
+                    <allowPath>*/veiviser-valg/*</allowPath>
                   </config>
                 </input>
               </items>
@@ -92,6 +94,8 @@
                             <allowContentType>choice</allowContentType>
                             <allowContentType>choice-group</allowContentType>
                             <treeMode>true</treeMode>
+                            <allowPath>./*</allowPath>
+                            <allowPath>*/veiviser-valg/*</allowPath>
                           </config>
                         </input>
                       </items>

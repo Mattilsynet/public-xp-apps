@@ -34,7 +34,7 @@
 						<input name="nextStep" type="ContentSelector">
 							<label i18n="">Grener</label>
 							<help-text>En gren er en retning vi vil sende brukeren basert på om brukeren har valgt ett
-								eller flere av valgene som ligger i grenen
+								eller flere av valgene som ligger i grenen. Du kan kun velge en gren på samme nivå eller dypere
 							</help-text>
 							<occurrences minimum="0" maximum="0" />
 							<config>
@@ -60,7 +60,7 @@
 						<input name="nextStep" type="ContentSelector">
 							<label i18n="">Grener</label>
 							<help-text>En gren er en retning vi vil sende brukeren basert på om brukeren har valgt ett
-								eller flere av valgene som ligger i grenen
+								eller flere av valgene som ligger i grenen. Du kan kun velge en gren på samme nivå eller dypere
 							</help-text>
 							<occurrences minimum="0" maximum="0" />
 							<config>
@@ -86,7 +86,7 @@
 						<input name="nextStep" type="ContentSelector">
 							<label i18n="">Grener</label>
 							<help-text>En gren er en retning vi vil sende brukeren basert på om brukeren har valgt ett
-								eller flere av valgene som ligger i grenen
+								eller flere av valgene som ligger i grenen. Du kan kun velge en gren på samme nivå eller dypere
 							</help-text>
 							<occurrences minimum="0" maximum="0" />
 							<config>
@@ -97,17 +97,17 @@
 
             <item-set name="collapsableButtonText">
               <label i18n="">Lukkbar Knapptekst</label>
-              <occurrences minimum="1" maximum="1"/>
+              <occurrences minimum="1" maximum="1" />
               <items>
                 <input type="textLine" name="openLabel">
                   <label i18n="">Knapptekst åpen</label>
-                  <occurrences minimum="1" maximum="1"/>
+                  <occurrences minimum="1" maximum="1" />
                   <default>Skjul</default>
                 </input>
 
                 <input type="TextLine" name="closedLabel">
                   <label i18n="">Knapptekst lukket</label>
-                  <occurrences minimum="1" maximum="1"/>
+                  <occurrences minimum="1" maximum="1" />
                   <default>Vis</default>
                 </input>
               </items>
