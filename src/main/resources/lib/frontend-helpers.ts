@@ -1,6 +1,12 @@
 import { getQueryParamObject, mapQueryToValues, WizardQueryParamObject } from './wizard-util'
-import { TranslatedChoiceMap, TreeQuestionNode, UIError, WizardRoot } from './types'
-import { isResultCalculator } from './type-check'
+import {
+  TranslatedChoiceMap,
+  TreeQuestionNode,
+  UIError,
+  WizardRenderNode,
+  WizardRoot,
+} from './types'
+import { isNumbers, isResultCalculator } from './type-check'
 
 export function findError(errors: Array<UIError>, key: string): undefined | UIError {
   return errors.find((error) => error.key === key)
@@ -46,6 +52,37 @@ export function mapChoiceSummary(
       choice: `${currChoice}`,
     })
   }, [])
+}
+
+export function createUrlQueryWizard(
+  nodes: WizardRenderNode,
+  wizardResponses: Array<WizardQueryParamObject>
+): string {
+  return wizardResponses.reduce((acc, curr) => {
+    const node = nodes[curr.id]
+
+    if (isNumbers(node)) {
+      const query = `${encodeURIComponent(`${curr.id}_${curr.choice[0]}`)}=${encodeURIComponent(curr.value ? curr.value : '')}`
+      return acc === '' ? query : `${acc}&${query}`
+    }
+    const question = curr.id
+    const value = curr.choice.join(',')
+    const query = `${encodeURIComponent(question)}=${encodeURIComponent(value)}`
+    return acc === '' ? query : `${acc}&${query}`
+  }, '')
+}
+
+export function addNotAnsweredQuestions(
+  data: Array<WizardQueryParamObject>,
+  renderSteps: Array<WizardRenderNode>
+): Array<WizardQueryParamObject> {
+  return renderSteps.reduce((acc, curr) => {
+    const dataHasId = data.find((d) => curr.id === d.id)
+    if (dataHasId === undefined) {
+      return acc.concat({ id: curr.id, choice: [] })
+    }
+    return acc
+  }, data)
 }
 
 function getChoiceString(choices: TranslatedChoiceMap, choice: WizardQueryParamObject): string {

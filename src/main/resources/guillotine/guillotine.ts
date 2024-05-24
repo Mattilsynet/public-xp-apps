@@ -76,11 +76,34 @@ export function extensions(graphQL: GraphQL): GuillotineExtensions {
             errors,
             validTree: errors.length === 0,
           }
+
           const traversedGraph = traverseGraph(env.args.wizardChoices, root)
-          const validationErrors = validateWizardData(
-            traversedGraph.renderSteps,
-            mapQueryToValues(env.args.wizardChoices)
-          )
+          const steps = traversedGraph.renderSteps
+          const data = mapQueryToValues(env.args.wizardChoices)
+
+          const uniqueQueryIds = data.reduce((acc, curr) => {
+            if (acc.indexOf(curr.id) < 0) {
+              return [...acc, curr.id]
+            }
+            return acc
+          }, [])
+          const validationErrors = validateWizardData(steps, data)
+          if (
+            validationErrors.length > 0 &&
+            traversedGraph.renderSteps.length > uniqueQueryIds.length
+          ) {
+            return {
+              ...root,
+              validationErrors,
+              traversedGraph: {
+                ...traversedGraph,
+                renderSteps: traversedGraph.renderSteps.slice(
+                  0,
+                  traversedGraph.renderSteps.length - 1
+                ),
+              },
+            }
+          }
           return { ...root, validationErrors, traversedGraph }
         },
       },
