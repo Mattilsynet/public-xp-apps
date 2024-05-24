@@ -311,7 +311,7 @@ function getLooseNodes(data: WizardRoot, mappedNodes: Node[], enonicEditPath: st
           enonicEditPath: enonicEditPath + node.id,
           style: { background: 'darkred', color: 'white' },
         },
-        position: { x: 20, y: 100 + acc.length * 80 },
+        position: { x: 10, y: 100 + acc.length * 80 },
       })
     }
     return acc

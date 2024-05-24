@@ -99,7 +99,7 @@ export function LayoutFlow({ data }: { data: AppData }) {
             fitView>
             <Background />
             <Controls />
-            <Panel position="top-right">
+            <Panel position="top-right" className={'layout-panel'}>
               <button onClick={() => onLayout('TB')}>Vertikal visning</button>
               <button onClick={() => onLayout('LR')}>Horisontal visning</button>
             </Panel>

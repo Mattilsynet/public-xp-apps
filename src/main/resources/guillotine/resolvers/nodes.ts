@@ -154,13 +154,16 @@ function getQuestionAndResultNodes(
     if (isQuestionNodeContent(node)) {
       const choiceType = node.data.choiceType?._selected
       const choiceTypeData = node.data.choiceType?.[choiceType]
+      if (!choiceTypeData) {
+        errors.push(`Mangler valg-type for "${node.displayName ?? node._id}"`)
+      }
       mapped = {
         choiceType,
         question: node.data.question,
         helpText: processHtml({ value: node.data.helpText }),
         targets: forceArray(choiceTypeData?.nextStep ?? []),
-        collapsableButtonText: choiceTypeData.collapsableButtonText,
-        errorMessages: choiceTypeData.errorMessages,
+        collapsableButtonText: choiceTypeData?.collapsableButtonText,
+        errorMessages: choiceTypeData?.errorMessages,
       }
     } else if (isResultNodeContent(node)) {
       mapped = {
