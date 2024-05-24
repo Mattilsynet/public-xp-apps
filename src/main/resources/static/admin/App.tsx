@@ -1,5 +1,14 @@
 import React, { useCallback } from 'react'
-import ReactFlow, { addEdge, Background, Controls, useEdgesState, useNodesState } from 'reactflow'
+import ReactFlow, {
+  Background,
+  Controls,
+  Panel,
+  ReactFlowProvider,
+  useEdgesState,
+  useNodesState,
+  useReactFlow,
+} from 'reactflow'
+import Dagre from '@dagrejs/dagre'
 
 import 'reactflow/dist/style.css'
 import './App.sass'
@@ -9,11 +18,59 @@ import { CustomEdge } from './CustomEdge'
 
 const nodeTypes = { customNode: CustomNode }
 const edgeTypes = { customEdge: CustomEdge }
+const g = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}))
 
-export function App(data: AppData) {
+const getLayoutedElements = (nodes, edges, options: Dagre.GraphLabel) => {
+  g.setGraph(options)
+
+  edges.forEach((edge) => g.setEdge(edge.source, edge.target))
+  nodes.forEach((node) => g.setNode(node.id, node))
+
+  Dagre.layout(g)
+
+  return {
+    nodes: nodes.map((node) => {
+      const { x, y } = g.node(node.id)
+
+      return { ...node, position: { x, y } }
+    }),
+    edges,
+  }
+}
+
+export function LayoutFlow({ data }: { data: AppData }) {
+  const { fitView } = useReactFlow()
   const [nodes, setNodes, onNodesChange] = useNodesState(data.nodes)
   const [edges, setEdges, onEdgesChange] = useEdgesState(data.edges)
-  const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), [setEdges])
+
+  const onLayout = useCallback(
+    (rankdir) => {
+      let nodesThatShouldMove = []
+      let nodesThatShouldNotMove = []
+      let edgesThatShouldMove = []
+      let edgesThatShouldNotMove = []
+      nodes.forEach((node) =>
+        node.data?.noMove ? nodesThatShouldNotMove.push(node) : nodesThatShouldMove.push(node)
+      )
+      edges.forEach((edge) =>
+        edge.data?.noMove ? edgesThatShouldNotMove.push(edge) : edgesThatShouldMove.push(edge)
+      )
+      const layouted = getLayoutedElements(nodesThatShouldMove, edgesThatShouldMove, {
+        rankdir,
+        nodesep: 150,
+        edgesep: 50,
+        ranksep: 100,
+      })
+
+      setNodes([...layouted.nodes, ...nodesThatShouldNotMove])
+      setEdges([...layouted.edges, ...edgesThatShouldNotMove])
+
+      window.requestAnimationFrame(() => {
+        fitView()
+      })
+    },
+    [nodes, edges]
+  )
   return (
     <>
       <div className="appbar">
@@ -21,6 +78,15 @@ export function App(data: AppData) {
           <span className="app-name">Wizard - forhåndsvisning veiviser</span>
         </div>
       </div>
+      {data.errors?.length > 0 ? (
+        <div className="errors">
+          {data.errors.map((error, id) => (
+            <p id={`${id}`}>{error}</p>
+          ))}
+        </div>
+      ) : (
+        <></>
+      )}
       {data.selectedWizard ? (
         <div className="react-flow-container">
           <ReactFlow
@@ -28,11 +94,15 @@ export function App(data: AppData) {
             edges={edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
             nodeTypes={nodeTypes}
-            edgeTypes={edgeTypes}>
+            edgeTypes={edgeTypes}
+            fitView>
             <Background />
             <Controls />
+            <Panel position="top-right">
+              <button onClick={() => onLayout('TB')}>Vertikal visning</button>
+              <button onClick={() => onLayout('LR')}>Horisontal visning</button>
+            </Panel>
           </ReactFlow>
         </div>
       ) : (
@@ -46,5 +116,13 @@ export function App(data: AppData) {
         </div>
       )}
     </>
+  )
+}
+
+export function App(data: AppData) {
+  return (
+    <ReactFlowProvider>
+      <LayoutFlow data={data} />
+    </ReactFlowProvider>
   )
 }

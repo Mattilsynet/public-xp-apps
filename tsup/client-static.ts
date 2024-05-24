@@ -38,6 +38,7 @@ export default function buildStaticConfig(): Options {
           'react/{cjs,umd}/*.js',
           'react-dom/{cjs,umd}/*.js',
           'reactflow/dist/{esm,umd}/*.js',
+          '@dagrejs/dagre/dist/*.js',
         ],
       }),
       GlobalsPlugin({
@@ -79,6 +80,7 @@ export default function buildStaticConfig(): Options {
     noExternal: [
       /^@enonic\/js-utils/,
       'reactflow',
+      '@dagrejs/dagre',
       'dayjs', // Not loaded into global scope
       'react', // WARNING: For GlobalsPlugin to work react MUST be listed here (if react under dependencies or peerDependencies)
       'react-dom', // WARNING: For GlobalsPlugin to work react MUST be listed here (if react under dependencies or peerDependencies)

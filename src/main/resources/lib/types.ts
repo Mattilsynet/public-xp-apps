@@ -55,7 +55,7 @@ export type TreeResultCalculatorNode = {
   type: string
   groupByQuestionId?: string
   resultGroups: TreeResultGroups
-  fallbackResult?: CoreCommon
+  fallbackResult?: CoreCommon & { id?: string }
   summaryPageTitle?: string
 }
 export type TreeQuestionNode = {

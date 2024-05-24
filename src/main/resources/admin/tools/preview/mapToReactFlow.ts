@@ -34,11 +34,10 @@ export function mapToReactFlow(
   const edges: Edge[] = []
   const visited: { [key: string]: boolean } = {}
   const queue: { nodeId: string; x: number; y: number }[] = [{ nodeId: data.rootNode, x: 0, y: 10 }]
-  let iteration = 0
+  let iteration = 1
 
   while (queue.length > 0) {
     const { nodeId, x, y } = queue.shift()
-    iteration++
     if (!visited[nodeId]) {
       visited[nodeId] = true
 
@@ -48,10 +47,10 @@ export function mapToReactFlow(
         continue
       }
       let label = nodeData.id
-      let other = undefined
+      let otherData = undefined
       if (isResult(nodeData)) {
         label = nodeData.title
-        other = {
+        otherData = {
           noSourceHandle: true,
           style: {
             background: 'hsla(60, 100%, 50%, 0.10)',
@@ -59,14 +58,14 @@ export function mapToReactFlow(
         }
       } else if (isQuestion(nodeData)) {
         label = nodeData.question
-        other = {
+        otherData = {
           style: {
             background: 'hsla(333, 100%, 50%, 0.10)',
           },
         }
       } else if (isResultCalculator(nodeData)) {
         label = 'Kalkulator'
-        other = {
+        otherData = {
           style: {
             background: 'hsla(0, 0%, 0%, 0.20)',
           },
@@ -75,9 +74,10 @@ export function mapToReactFlow(
       nodes.push({
         id: nodeId,
         type: 'customNode',
+        connectable: false,
         data: {
           ...nodeData,
-          ...other,
+          ...otherData,
           label: label?.substring(0, 100),
           enonicEditPath: enonicEditPath + nodeId,
         },
@@ -100,16 +100,14 @@ export function mapToReactFlow(
           iteration,
           enonicEditPath
         )
+        iteration++
       } else if (isResultCalculator(nodeData)) {
         mapResultCalculator(
           nodeData,
-          data,
           nodes,
           edges,
           nodeId,
           currentPathMap,
-          visited,
-          queue,
           iteration,
           enonicEditPath
         )
@@ -117,20 +115,25 @@ export function mapToReactFlow(
     }
   }
 
-  return { ...data, nodes, edges }
+  const looseNodes = getLooseNodes(data, nodes, enonicEditPath)
+  const looseEdges = getLooseEdges(data, edges, enonicEditPath, looseNodes)
+  if (looseNodes.length > 0) {
+    errors.push('Det finnes løse noder')
+  }
+  if (looseEdges.length > 0) {
+    errors.push('Det finnes løse grener')
+  }
+  return { ...data, nodes: nodes.concat(looseNodes, looseEdges), edges }
 }
 
 function mapResultCalculator(
   nodeData: TreeResultCalculatorNode,
-  data: WizardRoot,
   nodes: Node[],
   edges: Edge[],
   nodeId: string,
   currentPathMap: {
     [p: string]: boolean
   },
-  visited: { [p: string]: boolean },
-  queue: { nodeId: string; x: number; y: number }[],
   iteration: number,
   enonicEditPath: string
 ) {
@@ -139,8 +142,9 @@ function mapResultCalculator(
     nodes.push({
       id: groupId,
       type: 'output',
+      connectable: false,
       data: undefined,
-      position: { x: 225 * index, y: (iteration + 1) * 100 },
+      position: { x: 225 * index, y: iteration * 150 },
       style: {
         width: 222,
         height: 100 * group.length,
@@ -157,7 +161,9 @@ function mapResultCalculator(
       nodes.push({
         id: resultNode.id,
         type: 'customNode',
+        connectable: false,
         data: {
+          noMove: true,
           noTargetHandle: true,
           noSourceHandle: true,
           label: resultNode.displayName?.substring(0, 70),
@@ -174,25 +180,21 @@ function mapResultCalculator(
   })
 
   if (nodeData.fallbackResult) {
-    const fallbackId = 'fallback-' + nodeData.id
+    const fallbackId = nodeData.fallbackResult.id
     const fallbackIsRendered =
       currentPathMap[nodeId] &&
       nodeData.resultGroups?.every((group) => group.every((result) => !currentPathMap[result.id]))
     nodes.push({
       id: fallbackId,
       type: 'customNode',
-      // @ts-expect-error import of Position type results in error for some reason
-      targetPosition: 'right',
+      connectable: false,
       data: {
         noSourceHandle: true,
         label: 'Fallback: ' + nodeData.fallbackResult.title?.substring(0, 40),
-        // @ts-expect-error id is not in type, but exists in data
-        enonicEditPath: enonicEditPath + nodeData.fallbackResult?.id,
+        enonicEditPath: enonicEditPath + nodeData.fallbackResult.id,
       },
-      position: { x: 0, y: iteration * 100 - 50 },
-      style: fallbackIsRendered
-        ? { background: 'hsla(118, 100%, 69%, 0.3)', width: 180 }
-        : { width: 180 },
+      position: { x: 225 * nodeData.resultGroups?.length + 10, y: iteration * 150 },
+      style: fallbackIsRendered ? { background: 'hsla(118, 100%, 69%, 0.3)' } : {},
     })
     edges.push({
       id: fallbackId + '-edge',
@@ -217,7 +219,10 @@ function mapQuestionNode(
 ) {
   nodeData.targets?.forEach((edgeId, index) => {
     let nPushed = 0
+    const xOffset = index * 250
+    const yOffset = iteration * 150
     const edgeData = data.edges[edgeId]
+
     edges.push({
       id: edgeId,
       type: 'customEdge',
@@ -234,8 +239,8 @@ function mapQuestionNode(
     if (edgeData.target && !visited[edgeData.target]) {
       queue.push({
         nodeId: edgeData.target,
-        x: index * 250 + nPushed * 250,
-        y: (iteration + 1) * 100,
+        x: xOffset + nPushed * 250,
+        y: yOffset,
       })
       nPushed++
     }
@@ -247,6 +252,7 @@ function mapQuestionNode(
         label: getConditionLabel(condition),
         type: 'customEdge',
         data: {
+          conditionalEdge: true,
           enonicEditPath: enonicEditPath + edgeId,
         },
         target: condition.target,
@@ -255,8 +261,8 @@ function mapQuestionNode(
       if (!visited[condition.target]) {
         queue.push({
           nodeId: condition.target,
-          x: index * 250 + nPushed * 250,
-          y: (iteration + 1) * 100,
+          x: xOffset + nPushed * 250,
+          y: yOffset,
         })
         nPushed++
       }
@@ -271,6 +277,7 @@ function mapQuestionNode(
         label: getConditionLabel(totalCondition),
         type: 'customEdge',
         data: {
+          conditionalEdge: true,
           enonicEditPath: enonicEditPath + edgeId,
         },
         target: totalConditionTarget,
@@ -278,12 +285,65 @@ function mapQuestionNode(
       })
       queue.push({
         nodeId: totalConditionTarget,
-        x: index * 250 + nPushed * 250,
-        y: (iteration + 1) * 100,
+        x: xOffset + nPushed * 250,
+        y: yOffset,
       })
       nPushed++
     }
   })
+}
+
+function getLooseNodes(data: WizardRoot, mappedNodes: Node[], enonicEditPath: string) {
+  const nodes = data.nodes
+  return Object.keys(nodes).reduce((acc: Node[], nodeKey) => {
+    const node = nodes[nodeKey]
+    const nodeIsUsed = mappedNodes.some((mappedNode) => mappedNode.id === node.id)
+    if (!nodeIsUsed) {
+      return acc.concat({
+        id: node.id + acc.length,
+        type: 'customNode',
+        data: {
+          noMove: true,
+          noTargetHandle: true,
+          noSourceHandle: true,
+          // @ts-expect-error skipping type check
+          label: `Løs node: "${node.question ?? node.title ?? node.id}"`,
+          enonicEditPath: enonicEditPath + node.id,
+          style: { background: 'darkred', color: 'white' },
+        },
+        position: { x: 20, y: 100 + acc.length * 80 },
+      })
+    }
+    return acc
+  }, [])
+}
+
+function getLooseEdges(
+  data: WizardRoot,
+  mappedEdges: Edge[],
+  enonicEditPath: string,
+  looseNodes: Node[]
+) {
+  return Object.keys(data.edges).reduce((acc: Node[], edgeId) => {
+    const edge = data.edges[edgeId]
+    const edgeIsUsed = mappedEdges.some((mappedEdge) => mappedEdge.id === edgeId)
+    if (!edgeIsUsed) {
+      acc.push({
+        id: edgeId,
+        type: 'customNode',
+        data: {
+          noMove: true,
+          noTargetHandle: true,
+          noSourceHandle: true,
+          label: `Løs gren: "${edge.displayName}"`,
+          enonicEditPath: enonicEditPath + edgeId,
+          style: { background: 'darkred', color: 'white' },
+        },
+        position: { x: 20, y: 100 + acc.length * 80 + looseNodes.length * 80 },
+      })
+    }
+    return acc
+  }, [])
 }
 
 function getConditionLabel(condition: SpecificNumberCondition | TotalNumberCondition): string {

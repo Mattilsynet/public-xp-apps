@@ -27,7 +27,8 @@
     "dayjs": "^1",
     "react": "^18",
     "react-dom": "^18",
-    "reactflow": "^11.11.3"
+    "reactflow": "^11.11.3",
+    "@dagrejs/dagre": "^1.1.2"
   },
   "devDependencies": {
     "@enonic-types/global": "^7",
