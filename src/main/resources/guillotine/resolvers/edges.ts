@@ -50,9 +50,7 @@ export function resolveEdges(
 
     const source = edgeToNodeSourceMap[edge._id]
     if (!source) {
-      errors.push(
-        `Fant ikke spørsmålet som fører til grenen! spørsmål:${source} gren:${edge.displayName}`
-      )
+      errors.push(`Det finnes en løs gren. navn:${edge.displayName}`)
     }
     return {
       ...acc,

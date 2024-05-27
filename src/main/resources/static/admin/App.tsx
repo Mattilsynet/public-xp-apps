@@ -107,7 +107,7 @@ export function LayoutFlow({ data }: { data: AppData }) {
         </div>
       ) : (
         <div className="choose-wizard-container">
-          <h1>Velg en veiviser</h1>
+          <h1>{data.wizards?.length > 0 ? 'Velg en veiviser' : 'Du må opprette en veiviser'}</h1>
           {data.wizards?.map((wizard, id) => (
             <a href={`${window.location.pathname}?wizard=${wizard.id}`} key={id}>
               {wizard.title}

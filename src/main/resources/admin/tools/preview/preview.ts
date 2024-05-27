@@ -29,6 +29,7 @@ import { wizardType } from '/lib/type-check'
 import { Wizard } from '/codegen/site/content-types'
 import { Content } from '@enonic-types/lib-content'
 
+const repositoryFromAppConfig = app.config.repository
 const router = Router()
 
 router.all(`/${GETTER_ROOT}/{path:.+}`, (r: Request) => {
@@ -53,24 +54,30 @@ const get = (request: Request): any => {
       )
     }
   }
+  const repository = repositoryFromAppConfig ?? 'com.enonic.cms.mattilsynet'
   const data = run(
     {
-      repository: 'com.enonic.cms.mattilsynet', // todo change to selectable repository. AppConfig?
-      branch: 'draft', // todo make selectable through GUI
+      repository: repository,
+      branch: app.config.branch ?? 'draft',
       principals: ['role:system.authenticated'],
     },
     () => {
       let wizards = undefined
+      const errors: string[] = []
+      if (!repositoryFromAppConfig) {
+        errors.push(
+          'Du må legge til "repository" variablen i app.config (etc: "com.enonic.cms.mattilsynet")'
+        )
+      }
       const selectedWizard = request.params['wizard']
       if (!selectedWizard) {
         wizards = query({
           filters: { hasValue: { field: 'type', values: [wizardType('wizard')] } },
         }).hits.map((wizard) => ({ id: wizard._id, title: wizard.displayName }))
-        return { wizards }
+        return { wizards, errors }
       }
       const wizard = getContent<Content<Wizard>>({ key: selectedWizard })
       const wizardPath = wizard?._path?.replace('/content', '')
-      const errors: string[] = []
       const choiceMaps = getChoiceMaps()
       const nodes = resolveNodes(wizardPath, choiceMaps, errors)
       const edges = resolveEdges(wizardPath, nodes, choiceMaps, errors)
@@ -92,7 +99,7 @@ const get = (request: Request): any => {
         traversedGraph.renderSteps,
         mapQueryToValues(queryString)
       )
-      const enonicEditPath = `/admin/tool/com.enonic.app.contentstudio/main/mattilsynet/edit/` //TODO make this dynamic
+      const enonicEditPath = `/admin/tool/com.enonic.app.contentstudio/main/${repository.split('.').pop()}/edit/`
       return {
         ...mapToReactFlow({ ...root, validationErrors, traversedGraph }, enonicEditPath, errors),
         selectedWizard,
