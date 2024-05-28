@@ -35,6 +35,7 @@ export function getContentWithinWizard(request: Request, contentTypes: string[])
   }
 
   const iconUrlResult = assetUrl({ path: 'result.svg' })
+  const iconUrlResultWithConditions = assetUrl({ path: 'result-with-conditions.svg' })
   const iconUrlQuestion = assetUrl({ path: 'question.svg' })
   const iconUrlResultCalculator = assetUrl({ path: 'result-calculator.svg' })
   const iconUrlChoice = assetUrl({ path: 'choice.svg' })
@@ -46,7 +47,7 @@ export function getContentWithinWizard(request: Request, contentTypes: string[])
 
   const choicesWithinWizard = query({
     query: `_path LIKE '/content${wizardPath}/*'${queryString ? ` AND (${queryString})` : ''}`,
-    count: request.params.count ? Number(request.params.count) : 10,
+    count: -1,
     filters: {
       hasValue: {
         field: 'type',
@@ -70,6 +71,9 @@ export function getContentWithinWizard(request: Request, contentTypes: string[])
         break
       case wizardType('choice-group'):
         iconUrl = iconUrlChoiceGroup
+        break
+      case wizardType('result-with-conditions'):
+        iconUrl = iconUrlResultWithConditions
         break
     }
     return {
