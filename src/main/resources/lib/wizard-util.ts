@@ -17,10 +17,20 @@ export function isMultiSelect(node?: WizardRenderNode): node is WizardRenderNode
 
 export function mapQueryToValues(query: string): Array<WizardQueryParamObject> {
   const idsAndValues = splitQueryParamString(query)
-  return idsAndValues.map((str) => {
+  return idsAndValues.reduce((acc, str) => {
     const keyValue = str.split('=')
-    return getQueryParamObject(keyValue[0], keyValue[1])
-  })
+    const hasKey = acc.find((a) => a.id === keyValue[0])
+    if (hasKey) {
+      return acc.map((a) => {
+        if (a.id === keyValue[0]) {
+          return { ...a, choice: [...a.choice, keyValue[1]] }
+        }
+        return a
+      })
+    }
+    const queryParamObject = getQueryParamObject(keyValue[0], keyValue[1])
+    return acc.concat(queryParamObject)
+  }, [])
 }
 
 function splitQueryParamString(query?: string): Array<string> {

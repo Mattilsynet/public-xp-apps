@@ -152,12 +152,7 @@ describe('Utils', function () {
 })
 
 describe('mapQueryToValues', () => {
-  it('mapQueryToValues - maps query', () => {
-    const res = mapQueryToValues(
-      encodeURI(
-        'd9d69944-4f22-4e40-a457-d77e9f151dfb=ja&776101f2-615c-404b-8d37-acbe8b7ede38_hund=10&776101f2-615c-404b-8d37-acbe8b7ede38_katt=1&f0621c54-e231-4fb0-af92-d3eb796f7c85=sverige,nord-irland'
-      )
-    )
+  function commonExpect(res) {
     expect(res[0].id).toEqual('d9d69944-4f22-4e40-a457-d77e9f151dfb')
     expect(res[0].choice).toEqual(['ja'])
     expect(res[1].id).toEqual('776101f2-615c-404b-8d37-acbe8b7ede38')
@@ -168,6 +163,22 @@ describe('mapQueryToValues', () => {
     expect(res[2].value).toEqual(1)
     expect(res[3].id).toEqual('f0621c54-e231-4fb0-af92-d3eb796f7c85')
     expect(res[3].choice).toEqual(['sverige', 'nord-irland'])
+  }
+  it('mapQueryToValues - maps query', () => {
+    const res = mapQueryToValues(
+      encodeURI(
+        'd9d69944-4f22-4e40-a457-d77e9f151dfb=ja&776101f2-615c-404b-8d37-acbe8b7ede38_hund=10&776101f2-615c-404b-8d37-acbe8b7ede38_katt=1&f0621c54-e231-4fb0-af92-d3eb796f7c85=sverige,nord-irland'
+      )
+    )
+    commonExpect(res)
+  })
+  it('mapQueryToValues - multiple of same key', () => {
+    const res = mapQueryToValues(
+      encodeURI(
+        'd9d69944-4f22-4e40-a457-d77e9f151dfb=ja&776101f2-615c-404b-8d37-acbe8b7ede38_hund=10&776101f2-615c-404b-8d37-acbe8b7ede38_katt=1&f0621c54-e231-4fb0-af92-d3eb796f7c85=sverige&&f0621c54-e231-4fb0-af92-d3eb796f7c85=nord-irland'
+      )
+    )
+    commonExpect(res)
   })
   it('mapQueryToValues - no values', () => {
     const res = mapQueryToValues(
