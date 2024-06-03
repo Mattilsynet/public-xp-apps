@@ -54,22 +54,50 @@ export function mapChoiceSummary(
   }, [])
 }
 
-export function createUrlQueryWizard(
+function handleNumbers(acc: string, curr: WizardQueryParamObject): string {
+  const query = `${encodeURIComponent(`${curr.id}_${curr.choice[0]}`)}=${encodeURIComponent(curr.value ? curr.value : '')}`
+  return acc === '' ? query : `${acc}&${query}`
+}
+
+function handleNumbersRemoveInvalid(acc: string, curr: WizardQueryParamObject): string {
+  if (curr.value === undefined || curr.value === 0) {
+    return acc
+  } else {
+    const query = `${encodeURIComponent(`${curr.id}_${curr.choice[0]}`)}=${encodeURIComponent(curr.value ? curr.value : '')}`
+    return acc === '' ? query : `${acc}&${query}`
+  }
+}
+
+function createUrlWizard(
   nodes: WizardRenderNode,
-  wizardResponses: Array<WizardQueryParamObject>
-): string {
-  return wizardResponses.reduce((acc, curr) => {
+  wizardResponses: Array<WizardQueryParamObject>,
+  handleNumbers: (acc: string, curr: WizardQueryParamObject) => string
+) {
+  return wizardResponses.reduce((acc: string, curr: WizardQueryParamObject): string => {
     const node = nodes[curr.id]
 
     if (isNumbers(node)) {
-      const query = `${encodeURIComponent(`${curr.id}_${curr.choice[0]}`)}=${encodeURIComponent(curr.value ? curr.value : '')}`
-      return acc === '' ? query : `${acc}&${query}`
+      return handleNumbers(acc, curr)
     }
     const question = curr.id
     const value = curr.choice.join(',')
     const query = `${encodeURIComponent(question)}=${encodeURIComponent(value)}`
     return acc === '' ? query : `${acc}&${query}`
   }, '')
+}
+
+export function createUrlQueryWizard(
+  nodes: WizardRenderNode,
+  wizardResponses: Array<WizardQueryParamObject>
+): string {
+  return createUrlWizard(nodes, wizardResponses, handleNumbers)
+}
+
+export function createUrlQueryWizardRemoveInvalid(
+  nodes: WizardRenderNode,
+  wizardResponses: Array<WizardQueryParamObject>
+): string {
+  return createUrlWizard(nodes, wizardResponses, handleNumbersRemoveInvalid)
 }
 
 export function addNotAnsweredQuestions(

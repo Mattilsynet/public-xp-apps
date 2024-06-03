@@ -6,6 +6,7 @@ export {
   findError,
   mapFormToQueryParamObject,
   createUrlQueryWizard,
+  createUrlQueryWizardRemoveInvalid,
   addNotAnsweredQuestions,
 } from '/lib/frontend-helpers'
 export { validateWizardData } from '/lib/validate'
