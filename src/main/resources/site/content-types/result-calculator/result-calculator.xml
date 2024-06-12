@@ -19,28 +19,33 @@
           <help-text>Brukes kun for visning i Content Studio. Det er lettere å få oversikt når gruppene er minimert</help-text>
           <occurrences minimum="0" maximum="1" />
         </input>
-        <input name="result" type="CustomSelector">
+        <input name="result" type="ContentSelector">
           <label>Resultat</label>
           <help-text>Det øverste resultatet som oppfyller sine egne betingelser vil vises. Hvis du bruker "resultat uten
-            betingelser" vil det alltid komme et resultat fra denne gruppa, resultatet må også ligge nederst i lista
+            betingelser" vil det alltid komme et resultat fra denne gruppa, resultatet må også ligge nederst i lista.
+            Kan kun finne innhold som ligger ett nivå over, eller dypere, enn dette innholdet (../*)
           </help-text>
           <occurrences minimum="1" maximum="0" />
           <config>
-            <service>result-with-conditions-within-wizard</service>
+            <allowContentType>result-with-conditions</allowContentType>
+            <allowContentType>result</allowContentType>
+            <allowPath>../*</allowPath>
           </config>
         </input>
       </items>
     </item-set>
-    <input name="fallbackResult" type="CustomSelector">
+    <input name="fallbackResult" type="ContentSelector">
       <label>Resultat som vises hvis ingen av resultatene i gruppene overfor vises</label>
+      <help-text>Kan kun finne innhold som ligger ett nivå over, eller dypere, enn dette innholdet (../*)</help-text>
       <occurrences minimum="0" maximum="1" />
       <config>
-        <service>result-within-wizard</service>
+        <allowContentType>result</allowContentType>
+        <allowPath>../*</allowPath>
       </config>
     </input>
 
     <input name="groupByQuestionId" type="CustomSelector">
-      <label>Grupper resultater med betingelse bassert på</label>
+      <label>Grupper resultater med betingelse basert på</label>
       <occurrences minimum="0" maximum="1" />
       <config>
         <service>question-within-wizard</service>

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <content-type>
   <display-name>Resultat med betingelser</display-name>
-  <display-name-expression>${title}</display-name-expression>
   <description>Resultat som vises fra resultat-kalkulator</description>
   <super-type>base:structured</super-type>
   <allow-child-content-type>${app}:*</allow-child-content-type>

@@ -21,7 +21,7 @@ export type ResultCalculator = {
   fallbackResult?: string;
 
   /**
-   * Grupper resultater med betingelse bassert på
+   * Grupper resultater med betingelse basert på
    */
   groupByQuestionId?: string;
 
