@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<content-type>
+  <display-name>Resultat-kalkulator</display-name>
+  <description>Vis flere resultater basert på brukerens svar</description>
+  <super-type>base:structured</super-type>
+  <allow-child-content-type>result</allow-child-content-type>
+  <allow-child-content-type>result-with-conditions</allow-child-content-type>
+  <allow-child-content-type>base:folder</allow-child-content-type>
+  <form>
+    <item-set name="resultGroups">
+      <label>Resultatgruppe</label>
+      <help-text>Maks ett svar i hver resultatgruppe vil vises. Dette gjør at du kan kun vise det viktigste
+        svaret. Den øverste resultatgruppa vil vises først
+      </help-text>
+      <occurrences minimum="0" maximum="0" />
+      <items>
+        <input name="doNotUseThisOnlyForEditors" type="TextLine">
+          <label>Navn på gruppe (kun for visning)</label>
+          <help-text>Brukes kun for visning i Content Studio. Det er lettere å få oversikt når gruppene er minimert</help-text>
+          <occurrences minimum="0" maximum="1" />
+        </input>
+        <input name="result" type="ContentSelector">
+          <label>Resultat</label>
+          <help-text>Det øverste resultatet som oppfyller sine egne betingelser vil vises. Hvis du bruker "resultat uten
+            betingelser" vil det alltid komme et resultat fra denne gruppa, resultatet må også ligge nederst i lista.
+            Kan kun finne innhold som ligger ett nivå over, eller dypere, enn dette innholdet (../*)
+          </help-text>
+          <occurrences minimum="1" maximum="0" />
+          <config>
+            <allowContentType>result-with-conditions</allowContentType>
+            <allowContentType>result</allowContentType>
+            <allowPath>../*</allowPath>
+          </config>
+        </input>
+      </items>
+    </item-set>
+    <input name="fallbackResult" type="ContentSelector">
+      <label>Resultat som vises hvis ingen av resultatene i gruppene overfor vises</label>
+      <help-text>Kan kun finne innhold som ligger ett nivå over, eller dypere, enn dette innholdet (../*)</help-text>
+      <occurrences minimum="0" maximum="1" />
+      <config>
+        <allowContentType>result</allowContentType>
+        <allowPath>../*</allowPath>
+      </config>
+    </input>
+
+    <input name="groupByQuestionId" type="CustomSelector">
+      <label>Grupper resultater med betingelse basert på</label>
+      <occurrences minimum="0" maximum="1" />
+      <config>
+        <service>question-within-wizard</service>
+      </config>
+    </input>
+
+
+    <field-set>
+      <label i18n="resultCalculator.label">Oppsummering</label>
+      <items>
+        <input name="summaryPageTitle" type="TextLine">
+          <label i18n="resultCalculator.summaryPageTitle">Tittel for oppsummering</label>
+          <default>Oppsummering</default>
+          <occurrences minimum="1" maximum="1" />
+        </input>
+      </items>
+    </field-set>
+  </form>
+</content-type>

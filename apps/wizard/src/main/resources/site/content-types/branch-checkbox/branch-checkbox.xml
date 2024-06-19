@@ -1,0 +1,26 @@
+<content-type>
+  <display-name i18n="">Gren sjekkboks</display-name>
+  <display-name-label i18n="">Gren med sjekkboks-valg</display-name-label>
+  <description i18n="">Gren med sjekkboks-valg</description>
+  <super-type>base:structured</super-type>
+  <allow-child-content-type>${app}:result</allow-child-content-type>
+  <allow-child-content-type>${app}:question</allow-child-content-type>
+  <allow-child-content-type>${app}:choice*</allow-child-content-type>
+  <allow-child-content-type>${app}:result-calculator</allow-child-content-type>
+  <allow-child-content-type>base:folder</allow-child-content-type>
+
+  <form>
+    <mixin name="choices" />
+
+    <input name="preferredChoices" type="CustomSelector">
+      <label i18n="">Foretrukne valg</label>
+      <help-text i18n="">Velg hvilke valg som skal vises øverst</help-text>
+      <occurrences minimum="0" maximum="0" />
+      <config>
+        <service>already-selected-choices-custom-selector</service>
+      </config>
+    </input>
+
+    <mixin name="next-question-or-result" />
+  </form>
+</content-type>
