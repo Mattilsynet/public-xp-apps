@@ -1,9 +1,0 @@
-<mixin>
-  <form>
-    <input name="required" type="TextLine">
-      <label>Påkrevd</label>
-      <occurrences minimum="1" maximum="1" />
-      <default>Du må svare på spørsmålet for å gå videre</default>
-    </input>
-  </form>
-</mixin>
