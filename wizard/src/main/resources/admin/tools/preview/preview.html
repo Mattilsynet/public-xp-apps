@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script type="text/javascript" src="{{reactUrl}}"></script>
+		<script type="text/javascript" src="{{reactDomUrl}}"></script>
+		<script type="text/javascript" src="{{reactflowUrl}}"></script>
+		<link rel="stylesheet" type="text/css" href="{{cssUrl}}">
+		<meta charset="UTF-8">
+		<title>Veiviser forhåndsvisning</title>
+		<link rel="stylesheet" type="text/css" href="{{assetsUrl}}/admin/common/styles/lib.css">
+		<!--
+			Uncomment to hydrate UI components from lib-admin-ui
+			<script defer src="{{assetsUrl}}/admin/common/js/lib.js" type="text/javascript"></script>
+		-->
+	</head>
+	<body style="font-size:13px">
+		<div id="react-root"></div>
+		<script type='module' defer>
+			import {App} from '{{appUrl}}';
+			const root = ReactDOM.createRoot(document.getElementById('react-root'));
+      const data = JSON.parse(`{{{data}}}`);
+			root.render(React.createElement(App, data));
+		</script>
+		<script defer src="{{launcherPath}}" type="text/javascript" data-config-theme="dark"></script>
+		{{#browserSyncUrl}}
+		<script src="{{browserSyncUrl}}"></script>
+		{{/browserSyncUrl}}
+	</body>
+</html>

@@ -1,0 +1,112 @@
+<mixin>
+  <display-name i18n="">Logisk sjekk</display-name>
+  <description i18n="">Sjekk om resultatet skal vises med logisk uttrykk</description>
+
+  <form>
+    <item-set name="displayCriteria">
+      <label>Kriterier for visning</label>
+      <help-text>Her settes opp logiske kriterier for når dette resultatet skal vises.
+        etc: (Hund ELLER Katt) OG Sverige
+      </help-text>
+      <occurrences minimum="1" maximum="1" />
+      <items>
+        <input name="logicalOperator" type="ComboBox">
+          <label>Logisk operator for denne boksen</label>
+          <help-text>Gjelder kun dersom du har mer enn ett element i denne boksen</help-text>
+          <occurrences minimum="1" maximum="1" />
+          <default>and</default>
+          <config>
+            <option value="and">Alle verdiene må oppfylles (OG)</option>
+            <option value="or">En av verdiene må oppfylles (ELLER)</option>
+            <option value="not">Ingen av verdiene må oppfylles (IKKE)</option>
+          </config>
+        </input>
+        <option-set name="choiceOrLogic">
+          <occurrences minimum="0" maximum="0" />
+          <help-text>Valg som ligger under veiviser er standard. Hvis du vil ha valg som ligger utenfor må du
+            tilbakestille "Valg". Du kan også legge til et ekstra nivå med logikk hvis det trengs
+          </help-text>
+          <options minimum="1" maximum="1">
+            <option name="choice">
+              <default>true</default>
+              <label>Valg</label>
+              <items>
+                <mixin name="logical-operator" />
+                <input name="choices" type="CustomSelector">
+                  <label>Valg</label>
+                  <occurrences minimum="1" maximum="0" />
+                  <config>
+                    <service>choices-within-wizard</service>
+                  </config>
+                </input>
+              </items>
+            </option>
+            <option name="choiceOutside">
+              <label>Valg som ligger utenfor veiviseren</label>
+              <items>
+                <mixin name="logical-operator" />
+                <input name="choices" type="ContentSelector">
+                  <label>Valg</label>
+                  <occurrences minimum="1" maximum="0" />
+                  <config>
+                    <allowContentType>choice</allowContentType>
+                    <allowContentType>choice-group</allowContentType>
+                    <treeMode>true</treeMode>
+                    <allowPath>./*</allowPath>
+                    <allowPath>*/veiviser-valg/*</allowPath>
+                  </config>
+                </input>
+              </items>
+            </option>
+            <option name="logic">
+              <label>Logisk uttrykk</label>
+              <items>
+                <mixin name="logical-operator" />
+                <option-set name="choiceOrChoiceOutside">
+                  <occurrences minimum="1" maximum="0" />
+                  <label>Betingelser for tall-input</label>
+                  <help-text>Valg som ligger under veiviser er standard. Hvis du vil ha valg som ligger utenfor må du
+                    tilbakestille "Valg". Du kan også legge til et ekstra nivå med logikk hvis det trengs
+                  </help-text>
+                  <options minimum="1" maximum="1">
+                    <option name="choice">
+                      <default>true</default>
+                      <label>Valg</label>
+                      <items>
+                        <mixin name="logical-operator" />
+                        <input name="choices" type="CustomSelector">
+                          <label>Valg</label>
+                          <occurrences minimum="1" maximum="0" />
+                          <config>
+                            <service>choices-within-wizard</service>
+                          </config>
+                        </input>
+                      </items>
+                    </option>
+                    <option name="choiceOutside">
+                      <label>Valg som ligger utenfor veiviseren</label>
+                      <items>
+                        <mixin name="logical-operator" />
+                        <input name="choices" type="ContentSelector">
+                          <label>Valg</label>
+                          <occurrences minimum="1" maximum="0" />
+                          <config>
+                            <allowContentType>choice</allowContentType>
+                            <allowContentType>choice-group</allowContentType>
+                            <treeMode>true</treeMode>
+                            <allowPath>./*</allowPath>
+                            <allowPath>*/veiviser-valg/*</allowPath>
+                          </config>
+                        </input>
+                      </items>
+                    </option>
+                  </options>
+                </option-set>
+              </items>
+            </option>
+          </options>
+        </option-set>
+      </items>
+    </item-set>
+  </form>
+</mixin>

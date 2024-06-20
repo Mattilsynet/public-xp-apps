@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": ["node", "global"],
+    "typeRoots": [
+      "../node_modules/@enonic-types",
+      "../node_modules/@types"
+    ],
+  },
+}
