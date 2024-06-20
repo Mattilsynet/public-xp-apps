@@ -1,0 +1,35 @@
+#!/bin/sh
+
+# Script to push the current app as a subtree to a upstream branch
+# Used to "fork" sub-modules to our public-xp-apps repository
+# This way we can expose xp apps to a public repository without exposing the whole project
+#
+# Usage:
+# run this script
+# see https://github.com/Mattilsynet/public-xp-apps/blob/main/maintaining.md
+
+SCRIPT_PATH="$(dirname "$(readlink -f "$0")")"
+APP_NAME=$(basename "$SCRIPT_PATH")
+RELATIVE_APP_PATH=$(basename "$(dirname "$SCRIPT_PATH")")/$APP_NAME
+LOCAL_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+UPSTREAM_BRANCH=$APP_NAME-upstream
+
+# go to the root of the project
+pushd $SCRIPT_PATH/../../
+
+# delete local branch
+git branch delete $UPSTREAM_BRANCH
+
+# checkout new branch
+git subtree split -P $RELATIVE_APP_PATH -b $UPSTREAM_BRANCH
+
+# force push over the old remote branch
+git push -f origin $UPSTREAM_BRANCH
+
+# checkout back to the original working branch
+git checkout $LOCAL_BRANCH
+
+# delete local branch
+git branch delete $UPSTREAM_BRANCH
+
+popd
