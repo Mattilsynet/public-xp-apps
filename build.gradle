@@ -1,3 +1,8 @@
+plugins {
+    id "maven-publish"
+    id "com.google.cloud.artifactregistry.gradle-plugin" version "2.2.1"
+}
+
 allprojects {
     group = 'no.mattilsynet.app'
 }
@@ -5,9 +10,7 @@ allprojects {
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven-publish'
-
-    sourceCompatibility = 17
-    targetCompatibility = 17
+    apply plugin: 'com.google.cloud.artifactregistry.gradle-plugin'
 
     java {
         withSourcesJar()
@@ -21,6 +24,12 @@ subprojects {
                 artifactId project.name
                 version project.version
                 from components.java
+            }
+        }
+
+        repositories {
+            maven {
+                url "artifactregistry://europe-north1-maven.pkg.dev/nettlosninger-prod/public-mvn-repository"
             }
         }
     }
