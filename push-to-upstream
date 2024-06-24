@@ -18,7 +18,7 @@ UPSTREAM_BRANCH=$APP_NAME-upstream
 pushd $SCRIPT_PATH/../../
 
 # delete local branch
-git branch delete $UPSTREAM_BRANCH
+git branch -D $UPSTREAM_BRANCH
 
 # checkout new branch
 git subtree split -P $RELATIVE_APP_PATH -b $UPSTREAM_BRANCH
@@ -30,6 +30,6 @@ git push -f origin $UPSTREAM_BRANCH
 git checkout $LOCAL_BRANCH
 
 # delete local branch
-git branch delete $UPSTREAM_BRANCH
+git branch -D $UPSTREAM_BRANCH
 
 popd
