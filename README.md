@@ -10,6 +10,7 @@ echo "repository=com.enonic.cms.SITE_NAME" > ~/.enonic/sandboxes/SANDBOXNAME/hom
 * Get started by either:
   * Seeing the [editor documentation](doc/editor-doc.pdf)
   * Importing the [example wizard](doc/wizard-example.zip) to your xp instance
+    * The example is close to what we use on our linear [Guide: Travelling with pets to Norway](https://www.mattilsynet.no/dyr/kjaeledyr/reise-med-kjaeledyr/veiviser-reise-med-kjaeledyr)
   * Trying it out blindly
 
 ## Make the wizard super-duper fast

@@ -75,7 +75,7 @@ export function LayoutFlow({ data }: { data: AppData }) {
     <>
       <div className="appbar">
         <div className="home-button app-icon">
-          <span className="app-name">Wizard - forhåndsvisning veiviser</span>
+          <span className="app-name">Wizard | preview</span>
         </div>
       </div>
       {data.errors?.length > 0 ? (
