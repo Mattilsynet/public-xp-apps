@@ -4,7 +4,7 @@ plugins {
 }
 
 allprojects {
-    group = 'no.mattilsynet.app'
+    group = 'no.mattilsynet'
 }
 
 subprojects {
