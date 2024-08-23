@@ -1,7 +1,7 @@
 {
     "author": "Mattilsynet",
     "name": "@mattilsynet/veiviser",
-    "version": "2.1.2",
+    "version": "2.1.3",
     "description": "Funksjoner for enonic veiviser",
     "type": "module",
     "private": false,
