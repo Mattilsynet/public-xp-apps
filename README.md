@@ -1,4 +1,4 @@
 # Veiviser
-## [README](apps/wizard/README.md)
+## [README](wizard/README.md)
 
 ---
