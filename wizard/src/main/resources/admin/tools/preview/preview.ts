@@ -54,7 +54,8 @@ const get = (request: Request): any => {
       )
     }
   }
-  const repository = repositoryFromAppConfig ?? 'com.enonic.cms.mattilsynet'
+
+  const repository = repositoryFromAppConfig
   const data = run(
     {
       repository: repository,
@@ -62,20 +63,23 @@ const get = (request: Request): any => {
       principals: ['role:system.authenticated'],
     },
     () => {
-      let wizards = undefined
       const errors: string[] = []
       if (!repositoryFromAppConfig) {
         errors.push(
-          'Du må legge til "repository" variablen i app.config (etc: "com.enonic.cms.mattilsynet")'
+          'Du må legge til "repository" variablen i no.mattilsynet.wizard.cfg (etc: "repository=com.enonic.cms.mattilsynet"). ' +
+            'Vi burde legge denne forhåndsvisningen et annet sted for å få context og støtte flere sites/layers'
         )
+        return { errors }
       }
+
       const selectedWizard = request.params['wizard']
       if (!selectedWizard) {
-        wizards = query({
+        const wizards = query({
           filters: { hasValue: { field: 'type', values: [wizardType('wizard')] } },
         }).hits.map((wizard) => ({ id: wizard._id, title: wizard.displayName }))
         return { wizards, errors }
       }
+
       const wizard = getContent<Content<Wizard>>({ key: selectedWizard })
       const wizardPath = wizard?._path?.replace('/content', '')
       const choiceMaps = getChoiceMaps()
@@ -103,7 +107,6 @@ const get = (request: Request): any => {
       return {
         ...mapToReactFlow({ ...root, validationErrors, traversedGraph }, enonicEditPath, errors),
         selectedWizard,
-        wizards,
       }
     }
   )
