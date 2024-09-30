@@ -17,8 +17,8 @@ import {
   ResultCalculator,
   ResultWithConditions,
 } from '/codegen/site/content-types'
-import { processHtml } from '/lib/xp/portal'
 import { CoreCommon } from '/codegen/site/mixins/core-common'
+import { processHtmlWithMacros } from '/lib/process-html'
 
 type WizardNodes = Content<Question | Result | ResultCalculator | ResultWithConditions>
 
@@ -90,7 +90,7 @@ function getResultCalculatorNodes(
         ...node.data,
         id: node._id,
         displayName: node.displayName,
-        text: processHtml({ value: node.data.text }),
+        text: processHtmlWithMacros(node.data.text),
         displayCriteria: {
           type: 'logic',
           operator: node.data.displayCriteria.logicalOperator,
@@ -160,7 +160,7 @@ function getQuestionAndResultNodes(
       mapped = {
         choiceType,
         question: node.data.question,
-        helpText: processHtml({ value: node.data.helpText }),
+        helpText: processHtmlWithMacros(node.data.helpText),
         targets: forceArray(choiceTypeData?.nextStep ?? []),
         collapsableButtonText: choiceTypeData?.collapsableButtonText,
         errorMessages: choiceTypeData?.errorMessages,
@@ -168,7 +168,7 @@ function getQuestionAndResultNodes(
     } else if (isResultNodeContent(node)) {
       mapped = {
         ...node.data,
-        text: processHtml({ value: node.data.text }),
+        text: processHtmlWithMacros(node.data.text),
       }
     } else if (!isResultCalculatorNodeContent(node) && !isResultWithConditionsContent(node)) {
       errors.push(`Ukjent node type: ${node.type}`)
