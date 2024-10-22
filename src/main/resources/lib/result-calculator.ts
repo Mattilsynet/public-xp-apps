@@ -50,7 +50,7 @@ export function getResultsFromResultCalculatorNode(
   node: TreeResultCalculatorNode,
   choiceMap: TranslatedChoiceMap,
   answers?: Array<string>
-): Array<CoreCommon & { id?: string }> {
+): Array<CoreCommon & { id?: string; x?: Record<string, unknown> }> {
   const { resultGroups, fallbackResult } = node
   const result =
     resultGroups?.reduce((acc, resultGroup) => {
@@ -58,8 +58,8 @@ export function getResultsFromResultCalculatorNode(
         return shouldRenderResultWithConditions(resultGroup.displayCriteria, choiceMap, answers)
       })
       if (resultInGroupToRender) {
-        const { title, intro, text, id } = resultInGroupToRender
-        return [...acc, { title, intro, text, id }]
+        const { title, intro, text, id, x } = resultInGroupToRender
+        return [...acc, { title, intro, text, id, x }]
       }
       return acc
     }, []) || []
