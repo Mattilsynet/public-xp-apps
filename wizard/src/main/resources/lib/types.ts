@@ -47,6 +47,7 @@ export type TreeResultWithConditions = {
   }
   displayName?: string
   id?: string
+  x?: Record<string, unknown>
 } & CoreCommon
 
 export type TreeResultGroups = Array<Array<TreeResultWithConditions>>
@@ -57,6 +58,7 @@ export type TreeResultCalculatorNode = {
   resultGroups: TreeResultGroups
   fallbackResult?: CoreCommon & { id?: string }
   summaryPageTitle?: string
+  x?: Record<string, unknown>
 }
 export type TreeQuestionNode = {
   id: string
@@ -77,12 +79,15 @@ export type TreeQuestionNode = {
     greaterThanZero?: string
     isNumber?: string
   }
+  x?: Record<string, unknown>
+  [key: string]: unknown
 }
 export type TreeResultNode = {
   type: string
   id: string
   resultGroups: TreeResultGroups
   conditionResults?: Array<Omit<TreeResultNode, 'conditionResults'>>
+  x?: Record<string, unknown>
 } & Result
 export type TreeNode = TreeQuestionNode | TreeResultNode | TreeResultCalculatorNode
 export type TreeNodes = Record<string, TreeNode>
@@ -166,6 +171,7 @@ export type WizardRenderNode = {
   options?: Array<RadioOptions | MultiSelectOption | WizardNumberOptions>
   question?: string
   preferredChoices?: Array<MultiSelectOption>
+  x?: Record<string, unknown>
 } & Partial<CoreCommon>
 
 export type UIError = {

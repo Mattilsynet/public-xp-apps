@@ -63,6 +63,7 @@ export function mapNodeToRenderable(
       intro: step.node.intro,
       text: step.node.text,
       conditionResults: step.node.conditionResults,
+      x: step.node.x,
     }
   } else if (isResultCalculator(step.node)) {
     const choiceGroups = groupChoices(userChoices, choiceMap, step.node.groupByQuestionId)
