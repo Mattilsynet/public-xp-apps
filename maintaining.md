@@ -10,7 +10,7 @@ create or update a subtree branch from the app you want to update by running `pu
 
 checkout main in this project and run: (the example is only for our wizard app)
 ```bash
-git subtree pull -P wizard ../mattilsynet-web origin/wizard-upstream
+git subtree pull -P wizard app-source wizard-upstream
 ```
 `wizard-upstream` should be the branch in `mattilsynet-web` that you want to pull from.
 
