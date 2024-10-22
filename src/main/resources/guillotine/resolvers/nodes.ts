@@ -182,6 +182,7 @@ function getQuestionAndResultNodes(
       [node._id]: {
         id: node._id,
         type: node.type,
+        x: node.x,
         ...mapped,
       } as TreeNode,
     }

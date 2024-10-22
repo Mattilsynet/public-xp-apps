@@ -58,6 +58,7 @@ export type TreeResultCalculatorNode = {
   resultGroups: TreeResultGroups
   fallbackResult?: CoreCommon & { id?: string }
   summaryPageTitle?: string
+  x?: Record<string, unknown>
 }
 export type TreeQuestionNode = {
   id: string
@@ -78,6 +79,8 @@ export type TreeQuestionNode = {
     greaterThanZero?: string
     isNumber?: string
   }
+  x?: Record<string, unknown>
+  [key: string]: unknown
 }
 export type TreeResultNode = {
   type: string
