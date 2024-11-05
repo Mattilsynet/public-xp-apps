@@ -1,5 +1,6 @@
 import { processHtml } from '/lib/xp/portal'
 import { query } from '/lib/xp/content'
+import { get as getContext } from '/lib/xp/context'
 
 export function processHtmlWithMacros(html: string) {
   const textWithLinks = transformInternalLinksInHtml(html)
@@ -9,11 +10,14 @@ export function processHtmlWithMacros(html: string) {
 }
 
 function transformInternalLinksInHtml(text: string) {
+  const langPrefix = getContext().repository.match(/^com\.enonic\.cms\..+-en$/) ? '/en' : ''
   const hrefContentIds = findMatches(RegExp('<a[^>]*href="content://([a-z0-9-]{36})"', 'g'), text)
-  const idsToHref = query({ filters: { ids: { values: hrefContentIds } } })?.hits?.map((hit) => ({
-    id: hit._id,
-    href: hit._path?.replace(/\/[^/]*/, '') || '/',
-  }))
+  const idsToHref = query({ filters: { ids: { values: hrefContentIds } } })?.hits?.map((hit) => {
+    return {
+      id: hit._id,
+      href: hit._path?.replace(/\/[^/]*/, langPrefix) || '/',
+    }
+  })
   return idsToHref.reduce((acc, { id, href }) => acc.replace(RegExp(`content://${id}`), href), text)
 }
 
