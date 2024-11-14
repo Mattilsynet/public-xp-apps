@@ -7,6 +7,7 @@ import {
 import { CoreCommon } from '/codegen/site/mixins/core-common'
 import { flatten } from '@enonic/js-utils'
 
+/* eslint-disable-next-line @typescript-eslint/no-require-imports */
 require('../polyfills')
 
 /**
