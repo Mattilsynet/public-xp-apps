@@ -9,9 +9,28 @@ export function processHtmlWithMacros(html: string) {
   return replaceMacroCommentWithHtml(macroNames, processedHtml)
 }
 
+export function replaceInternalLinksInObject(jsonObject: object) {
+  try {
+    const jsonString = JSON.stringify(jsonObject)
+    if (jsonString.indexOf('content://') === -1) {
+      return jsonObject
+    }
+
+    const textWithLinks = transformInternalLinksInHtml(jsonString)
+    const processedJsonString = textWithLinks.replace(/="\\&quot;([^"]*)\\&quot;"/g, '=\\"$1\\"')
+    return JSON.parse(processedJsonString)
+  } catch (e) {
+    log.warning('failed to processJsonObjectWithInternalLinks', e)
+    return jsonObject
+  }
+}
+
 function transformInternalLinksInHtml(text: string) {
   const langPrefix = getContext().repository.match(/^com\.enonic\.cms\..+-en$/) ? '/en' : ''
-  const hrefContentIds = findMatches(RegExp('<a[^>]*href="content://([a-z0-9-]{36})"', 'g'), text)
+  const hrefContentIds = findMatches(
+    RegExp('<a[^>]*href=\\\\?"content://([a-z0-9-]{36})\\\\?"', 'g'),
+    text
+  )
   const idsToHref = query({ filters: { ids: { values: hrefContentIds } } })?.hits?.map((hit) => {
     return {
       id: hit._id,
