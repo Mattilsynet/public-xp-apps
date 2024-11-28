@@ -252,4 +252,4 @@ export type BranchNumber = {
      */
     nextQuestionOrResult: string;
   }>;
-}
+};

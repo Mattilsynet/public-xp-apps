@@ -14,4 +14,4 @@ export type CoreCommon = {
    * Text
    */
   text?: string;
-}
+};

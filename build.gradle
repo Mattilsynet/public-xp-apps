@@ -1,8 +1,11 @@
+import groovy.json.JsonBuilder
+import groovy.json.JsonSlurper
+
 plugins {
 	id 'java'
-	id 'com.enonic.xp.app' version '3.4.0'
-	id 'com.github.node-gradle.node' version '7.0.2'
-	id 'no.item.xp.codegen' version '2.3.0'
+	id 'com.enonic.xp.app' version '3.5.2'
+	id 'com.github.node-gradle.node' version '7.1.0'
+	id 'no.item.xp.codegen' version '2.6.2'
 }
 
 app {
@@ -42,17 +45,17 @@ dependencies {
 	include "com.enonic.xp:lib-vhost:${xpVersion}"
 	// include "com.enonic.xp:lib-websocket:${xpVersion}"
 
-	include 'com.enonic.lib:lib-cache:2.2.0'
+	include 'com.enonic.lib:lib-cache:2.2.1'
 	include 'com.enonic.lib:lib-http-client:3.2.2'
 	include 'com.enonic.lib:lib-mustache:2.1.1'
 	include 'com.enonic.lib:lib-router:3.1.0'
 	include 'com.enonic.lib:lib-static:1.0.3'
 	include 'com.enonic.lib:lib-text-encoding:2.1.1'
-	include 'com.enonic.lib:lib-thymeleaf:2.1.0'
+	include 'com.enonic.lib:lib-thymeleaf:2.1.1'
 	// include 'com.enonic.lib:lib-util:3.0.0'
 
 	// Used only for Admin Tool samples (admin/tools), remove if not needed
-	include 'com.enonic.lib:lib-admin-ui:4.7.0'
+	include 'com.enonic.lib:lib-admin-ui:4.9.2'
 
 	// Uncomment if you want to add tests using Enonic test framework
 	// testImplementation "com.enonic.xp:testing:${xpVersion}"
@@ -141,9 +144,9 @@ tasks.register('updateNodePackageVersion', Task) {
   dependsOn npmBuild
   def version = project.findProperty('version')
   def packageJsonFile = file('package/package.json')
-  def packageJson = new groovy.json.JsonSlurper().parseText(packageJsonFile.text)
+  def packageJson = new JsonSlurper().parseText(packageJsonFile.text)
   packageJson.version = version
-  packageJsonFile.write(new groovy.json.JsonBuilder(packageJson).toPrettyString())
+  packageJsonFile.write(new JsonBuilder(packageJson).toPrettyString())
 }
 
 tasks.register('npmPackageInstall', NpmTask) {

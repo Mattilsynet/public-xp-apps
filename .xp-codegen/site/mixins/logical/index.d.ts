@@ -119,4 +119,4 @@ export type Logical = {
         }
     >;
   };
-}
+};

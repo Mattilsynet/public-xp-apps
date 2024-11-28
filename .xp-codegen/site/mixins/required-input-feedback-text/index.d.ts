@@ -4,4 +4,4 @@ export type RequiredInputFeedbackText = {
    * Påkrevd
    */
   required: string;
-}
+};

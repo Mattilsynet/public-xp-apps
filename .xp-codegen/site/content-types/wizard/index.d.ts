@@ -19,4 +19,4 @@ export type Wizard = {
    * Spørsmål
    */
   question?: string;
-}
+};

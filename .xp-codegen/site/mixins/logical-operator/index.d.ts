@@ -4,4 +4,4 @@ export type LogicalOperator = {
    * Logisk operator for denne boksen
    */
   logicalOperator: "and" | "or" | "not";
-}
+};

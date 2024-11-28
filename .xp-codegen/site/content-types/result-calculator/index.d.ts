@@ -29,4 +29,4 @@ export type ResultCalculator = {
    * Tittel for oppsummering
    */
   summaryPageTitle: string;
-}
+};

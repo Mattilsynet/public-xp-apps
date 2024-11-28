@@ -84,4 +84,4 @@ export type ConditionNumber = {
           number?: number;
         };
       };
-}
+};
