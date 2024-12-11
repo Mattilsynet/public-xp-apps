@@ -1,6 +1,5 @@
 import ioResource from './ioResource'
-import { getSite, pageUrl as getPageUrl } from '/lib/xp/portal'
-import { getToolUrl } from '/lib/xp/admin'
+import { getSite, pageUrl as getPageUrl, serviceUrl } from '/lib/xp/portal'
 import { IS_DEV_MODE } from './runMode'
 import {
   DEBUG_MODE,
@@ -58,7 +57,10 @@ export const getAdminUrl = (
   { manifestPath = FILEPATH_MANIFEST_ESM, path }: UrlPostfixParams,
   tool: string
 ) => {
-  const urlPrefix = getToolUrl(app.name, tool)
+  const urlPrefix = serviceUrl({
+    application: app.name,
+    service: 'static-files',
+  })
 
   return getImmutableUrl({
     manifestPath,

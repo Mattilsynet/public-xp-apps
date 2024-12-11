@@ -1,45 +1,36 @@
 // @ts-expect-error no-types
 import { render } from '/lib/mustache'
-// @ts-expect-error no-types
-import Router from '/lib/router'
-import { getLauncherPath } from '/lib/xp/admin'
-import { assetUrl } from '/lib/xp/portal'
-import { getBrowserSyncUrl, isRunning } from './browserSync'
+import { Request } from '/types'
 import {
   contentSecurityPolicy,
   CSP_DEFAULT,
   CSP_PERMISSIVE,
   pushUniqueValue,
   UNSAFE_INLINE,
-} from './contentSecurityPolicy'
-import { IS_DEV_MODE } from './runMode'
-import { getAdminUrl, immutableGetter } from './urlHelper'
-import { FILEPATH_MANIFEST_CJS, FILEPATH_MANIFEST_NODE_MODULES, GETTER_ROOT } from './constants'
-import { Request } from '/types'
+} from '/admin/widgets/preview/contentSecurityPolicy'
+import { IS_DEV_MODE } from '/admin/widgets/preview/runMode'
+import { getBrowserSyncUrl, isRunning } from '/admin/widgets/preview/browserSync'
+import { get as getContext, run } from '/lib/xp/context'
+import { Content, get as getContent, query } from '/lib/xp/content'
+import { list as allRepos } from '/lib/xp/repo'
+import { wizardType } from '/lib/type-check'
+import { Wizard } from '/codegen/site/content-types'
 import { getChoiceMaps } from '/guillotine/resolvers/choices'
 import { resolveNodes } from '/guillotine/resolvers/nodes'
 import { resolveEdges } from '/guillotine/resolvers/edges'
-import { run } from '/lib/xp/context'
-import { mapToReactFlow } from '/admin/tools/preview/mapToReactFlow'
 import { traverseGraph } from '/lib/traverse'
 import { validateWizardData } from '/lib/validate'
 import { mapQueryToValues } from '/lib/wizard-util'
-import { get as getContent, query } from '/lib/xp/content'
-import { wizardType } from '/lib/type-check'
-import { Wizard } from '/codegen/site/content-types'
-import { Content } from '@enonic-types/lib-content'
+import { mapToReactFlow } from '/admin/widgets/preview/mapToReactFlow'
+import { getAdminUrl } from '/admin/widgets/preview/urlHelper'
+import {
+  FILEPATH_MANIFEST_CJS,
+  FILEPATH_MANIFEST_NODE_MODULES,
+} from '/admin/widgets/preview/constants'
+import { assetUrl } from '/lib/xp/portal'
+import { getLauncherPath, getToolUrl } from '/lib/xp/admin'
 
-const repositoryFromAppConfig = app.config.repository
-const router = Router()
-
-router.all(`/${GETTER_ROOT}/{path:.+}`, (r: Request) => {
-  return immutableGetter(r)
-})
-
-const get = (request: Request): any => {
-  const toolName = 'preview'
-  const VIEW = resolve(`${toolName}.html`)
-
+export function getRenderParams(request: Request, params: Record<string, string>) {
   const csp = CSP_DEFAULT
   pushUniqueValue(csp['script-src'], UNSAFE_INLINE)
   pushUniqueValue(csp['style-src'], UNSAFE_INLINE)
@@ -55,29 +46,46 @@ const get = (request: Request): any => {
     }
   }
 
-  const repository = repositoryFromAppConfig
+  const context = getContext()
+  const repository = params['repository'] ?? context.repository
   const data = run(
     {
-      repository: repository,
-      branch: app.config.branch ?? 'draft',
-      principals: ['role:system.authenticated'],
+      repository,
+      branch: params['branch'] ?? 'draft',
+      principals: context.authInfo.principals,
     },
     () => {
       const errors: string[] = []
-      if (!repositoryFromAppConfig) {
-        errors.push(
-          'Du må legge til "repository" variablen i no.mattilsynet.wizard.cfg (etc: "repository=com.enonic.cms.mattilsynet"). ' +
-            'Vi burde legge denne forhåndsvisningen et annet sted for å få context og støtte flere sites/layers'
-        )
+      if (!repository) {
+        errors.push('Fant ingen repositories')
         return { errors }
       }
 
-      const selectedWizard = request.params['wizard']
+      const selectedWizard = params['wizard']
+      const wizards = query({
+        filters: { hasValue: { field: 'type', values: [wizardType('wizard')] } },
+      }).hits.map((wizard) => ({ id: wizard._id, title: wizard.displayName }))
+      const repositories = allRepos()
+        .filter(
+          (repo) => repo.id.indexOf('com.enonic.cms') !== -1 && repo.id !== 'com.enonic.cms.default'
+        )
+        .map((repo) => {
+          return {
+            id: repo.id,
+            // @ts-expect-error com-enonic-cms.* has displayName
+            displayName: repo.data['com-enonic-cms']?.displayName,
+          }
+        })
       if (!selectedWizard) {
-        const wizards = query({
-          filters: { hasValue: { field: 'type', values: [wizardType('wizard')] } },
-        }).hits.map((wizard) => ({ id: wizard._id, title: wizard.displayName }))
-        return { wizards, errors }
+        return {
+          wizards,
+          errors,
+          repositories,
+          pathParams: {
+            branch: params['branch'] ?? 'draft',
+            repository,
+          },
+        }
       }
 
       const wizard = getContent<Content<Wizard>>({ key: selectedWizard })
@@ -93,9 +101,9 @@ const get = (request: Request): any => {
         errors,
         validTree: errors.length === 0,
       }
-      const queryString = Object.keys(request.params ?? {})
+      const queryString = Object.keys(params ?? {})
         ?.reduce((acc, key) => {
-          return acc.concat(`&${key}=${request.params[key]}`)
+          return acc.concat(`&${key}=${params[key]}`)
         }, '')
         ?.replace('&', '')
       const traversedGraph = traverseGraph(queryString, root)
@@ -103,15 +111,23 @@ const get = (request: Request): any => {
         traversedGraph.renderSteps,
         mapQueryToValues(queryString)
       )
-      const enonicEditPath = `/admin/tool/com.enonic.app.contentstudio/main/${repository.split('.').pop()}/edit/`
+      const enonicEditPath = `${getToolUrl('com.enonic.app.contentstudio', 'main')}/${repository.split('.').pop()}/edit/`
+
       return {
         ...mapToReactFlow({ ...root, validationErrors, traversedGraph }, enonicEditPath, errors),
-        selectedWizard,
+        wizards,
+        repositories,
+        pathParams: {
+          selectedWizard,
+          branch: params['branch'] ?? 'draft',
+          repository,
+        },
       }
     }
   )
 
-  const params = {
+  const toolName = 'preview'
+  const renderParams = {
     applicationIconUrl: getAdminUrl(
       {
         path: 'icons/application.svg',
@@ -162,16 +178,19 @@ const get = (request: Request): any => {
       return value
     }),
   }
+  return { csp, renderParams }
+}
+
+export function get(request: Request) {
+  const { params } = request
+  const VIEW = resolve(`preview.html`)
+
+  const { csp, renderParams } = getRenderParams(request, params)
 
   return {
-    body: render(VIEW, params),
+    body: render(VIEW, renderParams),
     headers: {
       'content-security-policy': contentSecurityPolicy(IS_DEV_MODE ? CSP_PERMISSIVE : csp),
     },
   }
 }
-
-router.get('', (r: Request) => get(r)) // Default admin tool path
-router.get('/', (r: Request) => get(r)) // Just in case someone adds a slash on the end
-
-export const all = (r: Request) => router.dispatch(r)

@@ -10,6 +10,7 @@ export type AppData = {
   validTree: boolean
   validationErrors?: Array<UIError>
   traversedGraph?: TraversedGraph
-  selectedWizard?: string
   wizards?: { id: string; title: string }[]
+  repositories?: { id: string; displayName: string }[]
+  pathParams?: { branch?: string; selectedWizard?: string; repository?: string }
 }
