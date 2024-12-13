@@ -62,4 +62,4 @@ export type BranchCheckbox = {
    * Neste spørsmål eller resultat
    */
   nextQuestionOrResult: string;
-}
+};

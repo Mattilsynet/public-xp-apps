@@ -4,4 +4,4 @@ export type ChoiceGroup = {
    * Valg-gruppen inneholder disse valgene
    */
   choices: Array<string> | string;
-}
+};

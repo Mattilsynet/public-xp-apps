@@ -9,6 +9,7 @@ import { mapQueryToValues } from '/lib/wizard-util'
 import { WizardRoot } from '/lib/types'
 import { traverseGraph } from '/lib/traverse'
 import { validateWizardData } from '/lib/validate'
+import { replaceInternalLinksInObject } from '/lib/process-html'
 
 export function extensions(graphQL: GraphQL): GuillotineExtensions {
   const { GraphQLString, GraphQLBoolean, Json, reference, list } = graphQL
@@ -92,19 +93,24 @@ export function extensions(graphQL: GraphQL): GuillotineExtensions {
             validationErrors.length > 0 &&
             traversedGraph.renderSteps.length > uniqueQueryIds.length
           ) {
+            const traversedGraphWithoutLastStep = {
+              ...traversedGraph,
+              renderSteps: traversedGraph.renderSteps.slice(
+                0,
+                traversedGraph.renderSteps.length - 1
+              ),
+            }
             return {
               ...root,
               validationErrors,
-              traversedGraph: {
-                ...traversedGraph,
-                renderSteps: traversedGraph.renderSteps.slice(
-                  0,
-                  traversedGraph.renderSteps.length - 1
-                ),
-              },
+              traversedGraph: replaceInternalLinksInObject(traversedGraphWithoutLastStep),
             }
           }
-          return { ...root, validationErrors, traversedGraph }
+          return {
+            ...root,
+            validationErrors,
+            traversedGraph: replaceInternalLinksInObject(traversedGraph),
+          }
         },
       },
     },

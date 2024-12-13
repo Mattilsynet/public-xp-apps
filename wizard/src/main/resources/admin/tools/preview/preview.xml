@@ -1,8 +1,0 @@
-<?xml version="1.0" ?>
-<tool xmlns="urn:enonic:xp:model:1.0">
-  <display-name>Wizard | preview</display-name>
-  <description>Preview your wizards</description>
-  <allow>
-    <principal>role:system.authenticated</principal>
-  </allow>
-</tool>

@@ -89,6 +89,7 @@ function getResultCalculatorNodes(
       resultWithConditions[node._id] = {
         ...node.data,
         id: node._id,
+        x: node.x,
         displayName: node.displayName,
         text: processHtmlWithMacros(node.data.text),
         displayCriteria: {
@@ -139,6 +140,7 @@ function getResultCalculatorNodes(
       [node._id]: {
         id: node._id,
         type: node.type,
+        x: node.x,
         ...mapped,
       } as TreeNode,
     }

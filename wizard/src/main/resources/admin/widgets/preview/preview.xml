@@ -1,0 +1,13 @@
+<widget xmlns="urn:enonic:xp:model:1.0">
+  <display-name>Wizard | preview</display-name>
+  <description>Preview your wizards</description>
+  <interfaces>
+    <interface>contentstudio.menuitem</interface>
+  </interfaces>
+  <allow>
+    <principal>role:system.authenticated</principal>
+  </allow>
+  <config>
+    <property name="context" value="project" />
+  </config>
+</widget>

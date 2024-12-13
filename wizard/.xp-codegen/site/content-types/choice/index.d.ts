@@ -4,4 +4,4 @@ export type Choice = {
    * Valgtekst
    */
   text: string;
-}
+};

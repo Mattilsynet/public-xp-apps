@@ -57,4 +57,4 @@ export type BranchRadio = {
    * Neste spørsmål eller resultat
    */
   nextQuestionOrResult: string;
-}
+};

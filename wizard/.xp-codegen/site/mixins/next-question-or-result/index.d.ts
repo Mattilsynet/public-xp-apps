@@ -4,4 +4,4 @@ export type NextQuestionOrResult = {
    * Neste spørsmål eller resultat
    */
   nextQuestionOrResult: string;
-}
+};

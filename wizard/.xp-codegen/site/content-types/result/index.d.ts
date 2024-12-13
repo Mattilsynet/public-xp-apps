@@ -14,4 +14,4 @@ export type Result = {
    * Text
    */
   text?: string;
-}
+};
